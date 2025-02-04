@@ -15,6 +15,8 @@ def log_message(msg_type, message):
         emojitag = "🧞‍♀️ "
     elif msg_type == "tool":
         emojitag = "📎 "
+    else:
+        emojitag = "❓ "
     log_file = LOGS_DIR/f"{msg_type}_messages.log"
     with open(log_file, "a", encoding="utf-8") as file:
         file.write(emojitag * 5)

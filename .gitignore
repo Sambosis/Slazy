@@ -19,3 +19,5 @@ repo/
 .env
 ## virtual environments in subdirectories
 **/.venv/
+*.log
+logs/

@@ -10,6 +10,7 @@ from .gotourl_reports import GoToURLReportsTool
 from .windows_navigation import WindowsNavigationTool
 # from .test_navigation_tool import windows_navigate
 from .write_code import WriteCodeTool
+from .create_picture import PictureGenerationTool
 __all__ = [
     "BaseAnthropicTool",
     "ToolError",
@@ -23,6 +24,7 @@ __all__ = [
     "GoToURLReportsTool",
     # "GoogleSearchTool",
     "WindowsNavigationTool",
-    "WriteCodeTool"
+    "WriteCodeTool",
+    "PictureGenerationTool",
     # "windows_navigate"
 ]

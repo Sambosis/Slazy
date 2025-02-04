@@ -95,7 +95,7 @@ class WriteCodeTool(BaseAnthropicTool):
                     },
                     "code_description": {
                         "type": "string",
-                        "description": "A detailed description of the code to be written. First speify the programming language that the code must be written in.  Then you must specify any additional imports, classes, functions, etc. that should be included in the code. If it needs to call functions from outside of the file requested, be specific and detailed about how they should be called. It also will need to know what files it may need to interact with, their paths and the directory structure. It should also give a brief description of the project as a whole, while being clear about the scope of the code that it needs to write."
+                        "description": "A detailed description of the code to be written. First speify the programming language that the code must be written in.  Then you must specify any additional imports, classes, functions, etc. that should be included in the code. If it needs to call functions from outside of the file requested, be specific and detailed about how they should be called. It also will need to know what files it may need to interact with, their paths and the directory structure. It should also give a brief description of the project as a whole, while being clear about the scope of the code that it needs to write. You need to give context about the domain that the code will be used in and any other relevant information that will help the code be written correctly.  The code writer will only have the context that you provide to it so be VERY detailed and specific"
                     },
                     "project_path": {
                         "type": "string",
@@ -195,7 +195,6 @@ class WriteCodeTool(BaseAnthropicTool):
         code_string="no code created"
         OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
         current_code_base = get_all_current_code()
-        ic(f"current_code_base: {current_code_base}")
 
         client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
@@ -240,12 +239,11 @@ class WriteCodeTool(BaseAnthropicTool):
             ]
             }
         ]
-        ic(messages)
         
         try:
             completion = client.chat.completions.create(
             # model="deepseek/deepseek-r1:nitro",
-            model = "openai/o1-mini",
+            model="anthropic/claude-3.5-haiku-20241022",
             messages=messages)
         except Exception as e:
             ic(f"error: {e}")
@@ -292,17 +290,16 @@ class WriteCodeTool(BaseAnthropicTool):
 
     async def _call_llm_to_review_code(self, code_description: str, file_path) -> str:
         """Call LLM to generate code based on the code description"""
-
+        ic()
         code_string="no code created"
         OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
         current_code_base = get_all_current_code()
-        ic(f"current_code_base: {current_code_base}")
         
         client2 = OpenAI(
             base_url="https://openrouter.ai/api/v1",
             api_key=OPENROUTER_API_KEY,
         )
-        ic()
+       
         
         # Prepare messages
         messages=[
@@ -314,8 +311,8 @@ class WriteCodeTool(BaseAnthropicTool):
                     "text": """Your are an expert with software engineer and proud researcher.  You review code projects for Programmers and try to help them by giving them insight into the best approaches to accomplish their task.
                     You try to anticipate common bugs, inefficiencies and suggest improvements to the origninal specs to add advanced performance and functionality.
                     by  carefully reviewing programs that submittied you and sending them back a detailed report with suggesions of the best ways to accomplish their task.
-                    
-                    Youd take the whole scope of the program into consideration when reviewing their task description."""
+                    You are also to research and provide information about the context of the of the application and any domain specific knowledge that is needed to accomplish their task.
+                    You take the whole scope of the program into consideration when reviewing their task description."""
                     },
                     ],
                 "role": "user",
@@ -338,12 +335,11 @@ class WriteCodeTool(BaseAnthropicTool):
                 ]
                 }
             ]
-        ic(messages)
 
         try:
             completion = client2.chat.completions.create(
             # model="perplexity/sonar-reasoning",
-            model="perplexity/sonar",
+            model="anthropic/claude-3.5-haiku-20241022",
             messages=messages)
         except Exception as e:
             ic(f"error: {e}")
@@ -355,7 +351,6 @@ class WriteCodeTool(BaseAnthropicTool):
         # write_chat_completion_to_file(completion, CODE_FILE)
 
         research_string = completion.choices[0].message.content
-        ic(research_string)
         
         return research_string
 
@@ -406,7 +401,6 @@ class WriteCodeTool(BaseAnthropicTool):
         """write code to a permanent file"""
         file_path = project_path / filename
         code_research_string = await self._call_llm_to_review_code(code_description, file_path)
-        ic(code_research_string)
         code_string = await self._call_llm_to_generate_code(code_description, code_research_string, file_path)
 
         

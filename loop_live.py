@@ -35,7 +35,8 @@ from tools import (
     # ToolError,
     WebNavigatorTool,
     ProjectSetupTool,
-    WriteCodeTool
+    WriteCodeTool,
+    PictureGenerationTool,
 )
 from tools import (
     ToolCollection,
@@ -115,6 +116,48 @@ class InterruptManager:
         self.messages = messages
         self.task = task
         
+    def check_and_clean_messages(self):
+        if not self.messages:
+            return False
+            
+        # Check for tool_result without matching tool_use
+        if len(self.messages) >= 2:
+            current_msg = self.messages[-1]
+            previous_msg = self.messages[-2]
+            
+            has_tool_result = (
+                isinstance(current_msg.get('content', []), list) and
+                any(isinstance(block, dict) and 
+                    block.get('type') == 'tool_result' 
+                    for block in current_msg.get('content', []))
+            )
+            
+            has_tool_use = (
+                isinstance(previous_msg.get('content', []), list) and
+                any(isinstance(block, dict) and 
+                    block.get('type') == 'tool_use' 
+                    for block in previous_msg.get('content', []))
+            )
+            
+            if has_tool_result and not has_tool_use:
+                self.messages.pop()  # Remove the tool_result message
+                return True
+                
+        # Check for dangling tool_use
+        last_message = self.messages[-1]
+        if isinstance(last_message.get('content', []), list):
+            has_tool_use = any(
+                isinstance(block, dict) and 
+                block.get('type') == 'tool_use'
+                for block in last_message.get('content', [])
+            )
+            if has_tool_use:
+                self.messages.pop()
+                return True
+                
+        return False
+
+
     def create_mock_tool_response(self, tool_use_block):
         """Create a mock tool response for interrupted tool calls"""
         return {
@@ -419,6 +462,7 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
             WebNavigatorTool(),
             ProjectSetupTool(display=display),
             WriteCodeTool(display=display),
+            PictureGenerationTool(display=display),
             display=display  # Pass display to ToolCollection
         )
         # ic(tool_collection)
