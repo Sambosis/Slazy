@@ -1,0 +1,36 @@
+🤡 🤡 🤡 🤡 🤡 
+create a pygame app that is a classic side scroller game. 
+The user should interact with the game with his keyboard.
+the main character looks like an italian plummer. 
+It should have full features such as jumping, running, and attacking.
+There should be enemies that the user can fight and avoid.
+He should be able to collect items and use them to get super powers.
+It should keep detailed stats of the user's performance.
+Your project directory is C:\mygit\Slazy\repo\pygamedemo. You need to make sure that all files you create and work you do is done in that directory. 
+
+
+🤡 🤡 🤡 🤡 🤡 
+create a pygame app that is a classic side scroller game. 
+The user should interact with the game with his keyboard.
+the main character looks like an italian plummer. 
+It should have full features such as jumping, running, and attacking.
+There should be enemies that the user can fight and avoid.
+He should be able to collect items and use them to get super powers.
+It should keep detailed stats of the user's performance.
+Your project directory is C:\mygit\Slazy\repo\pygamedemo. You need to make sure that all files you create and work you do is done in that directory. 
+
+
+🤡 🤡 🤡 🤡 🤡 
+
+['Total Token Usage 📈', 'Total Cache Creation: 0', 'Total Cache Retrieval: 3,059', 'Total Output: 197', 'Total Tokens: 3,534 with a total cost of $0.00 USD.']
+
+🤡 🤡 🤡 🤡 🤡 
+{'role': 'user', 'content': [{'type': 'tool_result', 'content': [], 'tool_use_id': 'toolu_01By82B6AesD43YaKTQ3YMKX', 'is_error': False}, {'type': 'text', 'text': 'Tool \'project_setup\' was called with input: {"command": "setup_project", "project_path": "C:\\\\mygit\\\\Slazy\\\\repo\\\\pygamedemo", "environment": "python", "packages": ["pygame", "json"]}.\nResult: ', 'cache_control': {'type': 'ephemeral'}}]}
+
+🤡 🤡 🤡 🤡 🤡 
+
+['Total Token Usage 📈', 'Total Cache Creation: 566', 'Total Cache Retrieval: 6,118', 'Total Output: 510', 'Total Tokens: 7,475 with a total cost of $0.01 USD.']
+
+🤡 🤡 🤡 🤡 🤡 
+{'role': 'user', 'content': [{'type': 'tool_result', 'content': [], 'tool_use_id': 'toolu_01PjZnFPZHvW6y3DRKbGGzuM', 'is_error': False}, {'type': 'text', 'text': 'Tool \'write_code\' was called with input: {"command": "write_code_to_file", "project_path": "C:\\\\mygit\\\\Slazy\\\\repo\\\\pygamedemo", "python_filename": "settings.py", "code_description": "Create a settings.py file that contains all game constants and configurations for a platformer game. This should include:\\n- Window dimensions\\n- Colors\\n- Player settings (speed, jump power, etc.)\\n- Game physics (gravity, friction)\\n- Score settings\\n- Power-up settings\\nLanguage: Python\\nThe file should contain only constants and configuration variables."}.\nResult: ', 'cache_control': {'type': 'ephemeral'}}]}
+

@@ -1,0 +1,82 @@
+🤡 🤡 🤡 🤡 🤡 
+You are tasked with creating a fully comprehensive IQ test designed specifically for an 11-year-old child that can produce scientifically valid results. The test will eventually be evaluated by another AI agent, but you are only responsible for generating the test. The final output should be coded as a javascript web app. Please follow these guidelines:
+
+1. **Test Format and Structure**:
+   - The test should consist of 10-15 carefully designed questions.
+   - Include a mix of question types such as:
+     - Verbal reasoning (e.g., analogies, vocabulary).
+     - Logical and abstract reasoning (e.g., pattern recognition, sequences).
+     - Spatial reasoning (e.g., puzzles requiring mental rotation).
+     - Quantitative reasoning (e.g., basic arithmetic puzzles or simple problem-solving).
+   - Provide multiple-choice answers for each question (with 3 to 5 options per question).
+   - The test taker should only see one question at a time.
+
+2. **Scientific Rigor**:
+   - Ensure the test is comprehensive with questions that are statistically valid and capable of measuring cognitive abilities effectively.
+   - Include clearly defined metrics or criteria for scoring each question to enable a scientific evaluation of the results.
+   - Where appropriate, include brief explanations or rationales for the answers to support future scientific analysis.
+
+3. **Content and Difficulty**:
+   - Ensure the difficulty and content are age-appropriate yet challenging for an 11-year-old.
+   - Use language that is clear and suitable for the target audience.
+   - The test should both stimulate cognitive abilities and provide measurable outcomes that can be scientifically analyzed.
+
+4. **Technical Implementation Web App**:
+   - The app should include a scoring mechanism that calculates a cumulative score based on user responses.
+
+5. **Output Format**:
+   - Output the complete code for the  web app.
+   - Make sure the code is readable with clear comments and modular structure for ease of future evaluation.
+   - Do not include any direct instructions for the evaluator within the user-facing parts of the app.
+
+Write the comprehensive IQ test accordingly.
+use the write_code tool to write all code for the project.
+When finished, please open the page to show that it works.Your project directory is C:\mygit\Slazy\repo\iq. You need to make sure that all files you create and work you do is done in that directory. 
+
+
+🤡 🤡 🤡 🤡 🤡 
+You are tasked with creating a fully comprehensive IQ test designed specifically for an 11-year-old child that can produce scientifically valid results. The test will eventually be evaluated by another AI agent, but you are only responsible for generating the test. The final output should be coded as a javascript web app. Please follow these guidelines:
+
+1. **Test Format and Structure**:
+   - The test should consist of 10-15 carefully designed questions.
+   - Include a mix of question types such as:
+     - Verbal reasoning (e.g., analogies, vocabulary).
+     - Logical and abstract reasoning (e.g., pattern recognition, sequences).
+     - Spatial reasoning (e.g., puzzles requiring mental rotation).
+     - Quantitative reasoning (e.g., basic arithmetic puzzles or simple problem-solving).
+   - Provide multiple-choice answers for each question (with 3 to 5 options per question).
+   - The test taker should only see one question at a time.
+
+2. **Scientific Rigor**:
+   - Ensure the test is comprehensive with questions that are statistically valid and capable of measuring cognitive abilities effectively.
+   - Include clearly defined metrics or criteria for scoring each question to enable a scientific evaluation of the results.
+   - Where appropriate, include brief explanations or rationales for the answers to support future scientific analysis.
+
+3. **Content and Difficulty**:
+   - Ensure the difficulty and content are age-appropriate yet challenging for an 11-year-old.
+   - Use language that is clear and suitable for the target audience.
+   - The test should both stimulate cognitive abilities and provide measurable outcomes that can be scientifically analyzed.
+
+4. **Technical Implementation Web App**:
+   - The app should include a scoring mechanism that calculates a cumulative score based on user responses.
+
+5. **Output Format**:
+   - Output the complete code for the  web app.
+   - Make sure the code is readable with clear comments and modular structure for ease of future evaluation.
+   - Do not include any direct instructions for the evaluator within the user-facing parts of the app.
+
+Write the comprehensive IQ test accordingly.
+use the write_code tool to write all code for the project.
+When finished, please open the page to show that it works.Your project directory is C:\mygit\Slazy\repo\iq. You need to make sure that all files you create and work you do is done in that directory. 
+
+
+🤡 🤡 🤡 🤡 🤡 
+
+['Total Token Usage 📈', 'Total Cache Creation: 3,059', 'Total Cache Retrieval: 0', 'Total Output: 140', 'Total Tokens: 3,890 with a total cost of $0.02 USD.']
+
+🤡 🤡 🤡 🤡 🤡 
+Command: setup_project
+Status: success
+Project Path: C:\mygit\Slazy\repo\iq
+Packages Installed:
+

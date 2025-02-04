@@ -1,0 +1,17 @@
+📎 📎 📎 📎 📎 ProjectSetupTool executing command: setup_project in python environment
+
+📎 📎 📎 📎 📎 ProjectSetupTool completed: Command: setup_project
+Status: success
+Project Path: C:\mygit\BLazy\repo\3dsim
+Packages Installed:
+
+📎 📎 📎 📎 📎 Processing command: powershell -Command "Get-WmiObject -Class Win32_Product | Where-Object {$_.Name -like '*Visual Studio*'}"
+
+📎 📎 📎 📎 📎 Processing command: powershell -Command "
+# Create main project directories
+New-Item -Path 'C:\mygit\BLazy\repo\3dsim\Assets' -ItemType Directory -Force
+New-Item -Path 'C:\mygit\BLazy\repo\3dsim\Assets\Scripts' -ItemType Directory -Force
+New-Item -Path 'C:\mygit\BLazy\repo\3dsim\Assets\Materials' -ItemType Directory -Force
+New-Item -Path 'C:\mygit\BLazy\repo\3dsim\Assets\Prefabs' -ItemType Directory -Force
+"
+

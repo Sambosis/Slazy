@@ -1,0 +1,48 @@
+🤡 🤡 🤡 🤡 🤡 
+create a side scroller web app where the main character looks like an italian plummer.  He should jump on characters to kill them, scroll to the side and jump over obsticals and collect items them give it super powers.Your project directory is C:\mygit\BLazy\repo\webappdemo. You need to make sure that all files you create and work you do is done in that directory. 
+
+
+🤡 🤡 🤡 🤡 🤡 
+create a side scroller web app where the main character looks like an italian plummer.  He should jump on characters to kill them, scroll to the side and jump over obsticals and collect items them give it super powers.Your project directory is C:\mygit\BLazy\repo\webappdemo. You need to make sure that all files you create and work you do is done in that directory. 
+
+
+🤡 🤡 🤡 🤡 🤡 
+
+['Total Token Usage 📈', 'Total Cache Creation: 0', 'Total Cache Retrieval: 3,059', 'Total Output: 149', 'Total Tokens: 3,437 with a total cost of $0.00 USD.']
+
+🤡 🤡 🤡 🤡 🤡 
+Command: setup_project
+Status: success
+Project Path: C:\mygit\BLazy\repo\webappdemo
+Packages Installed:
+
+🤡 🤡 🤡 🤡 🤡 
+
+['Total Token Usage 📈', 'Total Cache Creation: 515', 'Total Cache Retrieval: 6,118', 'Total Output: 526', 'Total Tokens: 7,390 with a total cost of $0.01 USD.']
+
+🤡 🤡 🤡 🤡 🤡 
+Command: create
+Status: success
+File Path: C:\mygit\BLazy\repo\webappdemo\index.html
+Operation: File created successfully
+
+🤡 🤡 🤡 🤡 🤡 
+
+['Total Token Usage 📈', 'Total Cache Creation: 1,254', 'Total Cache Retrieval: 9,692', 'Total Output: 2,457', 'Total Tokens: 13,636 with a total cost of $0.05 USD.']
+
+🤡 🤡 🤡 🤡 🤡 
+Command: create
+Status: success
+File Path: C:\mygit\BLazy\repo\webappdemo\game.js
+Operation: File created successfully
+
+🤡 🤡 🤡 🤡 🤡 
+
+['Total Token Usage 📈', 'Total Cache Creation: 5,318', 'Total Cache Retrieval: 14,005', 'Total Output: 2,708', 'Total Tokens: 22,266 with a total cost of $0.07 USD.']
+
+🤡 🤡 🤡 🤡 🤡 
+Command: create
+Status: success
+File Path: C:\mygit\BLazy\repo\webappdemo\server.py
+Operation: File created successfully
+

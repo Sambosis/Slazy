@@ -1,0 +1,27 @@
+📎 📎 📎 📎 📎 
+ProjectSetupTool executing command: setup_project in python environment
+
+📎 📎 📎 📎 📎 
+ProjectSetupTool completed: Command: setup_project
+Status: success
+Project Path: C:\mygit\Slazy\repo\iq
+Packages Installed:
+
+📎 📎 📎 📎 📎 
+WriteCodeTool Instructions: Python script to generate an IQ test for an 11-year-old child.
+The script should:
+1. Define a structured format for questions, including multiple choice options and answers
+2. Include different categories of questions (verbal, logical, spatial, and quantitative reasoning)
+3. Format the output clearly with proper spacing and organization
+4. Save the test to a text file
+
+The code should include:
+- A Question class to structure the questions
+- Functions to format and write the test
+- A main section with all the test questions
+- Clear formatting for output
+
+The test should be saved in two formats:
+1. Student version (without answers)
+2. Answer key version
+

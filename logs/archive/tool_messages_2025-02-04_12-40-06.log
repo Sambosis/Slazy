@@ -1,0 +1,15 @@
+📎 📎 📎 📎 📎 
+ProjectSetupTool executing command: setup_project in node environment
+
+📎 📎 📎 📎 📎 
+ProjectSetupTool completed: Command: setup_project
+Status: success
+Project Path: C:\mygit\Slazy\repo\iq
+Packages Installed:
+
+📎 📎 📎 📎 📎 
+('Error', "name 'display' is not defined")
+
+📎 📎 📎 📎 📎 
+('Initialization Error', "name 'display' is not defined")
+

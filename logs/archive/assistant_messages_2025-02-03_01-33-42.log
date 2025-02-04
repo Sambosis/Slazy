@@ -1,0 +1,933 @@
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Here is a quick summary of what I did:
+ 
+I cloned the repository from GitHub to my Windows project directory at C:\mygit\BLazy\repo\promptwebview using uv. I created a modified version of loop.py to integrate pywebview for GUI display, focusing on setting up the project structure and ensuring all dependencies are properly installed. I'll need to carefully adapt the original loop.py to work seamlessly with pywebview's window rendering mechanism.
+
+Critical self-question: Am I correctly handling the transition from a console-based application to a GUI-based application without losing core functionality?
+
+Quick response: I'll need to carefully map the original script's output and interaction methods to pywebview's rendering approach.
+
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+I'll help you with this task. Let's break it down into steps:
+
+1. First, let's clone the repository using bash and set up our project:
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Calling tool: bash
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Tool 'bash' was called with input: {"command": "cd C:\\mygit\\BLazy\\repo\\promptwebview && git clone https://github.com/sambosis/compuse ."}.
+Result: output: 
+error: ERROR:__main__:The directory C:/mygit/BLazy/repo/promptwebview does not exist.
+
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Here is a quick summary of what I did:
+ 
+I realized the project directory didn't exist, so I prepared commands to create the directory structure and clone the repository into the specified path at C:\mygit\BLazy\repo\promptwebview. 
+
+I noticed we'll need to create the directory first before cloning, and I'm planning to use the current directory (.) as the clone destination to avoid creating an extra subdirectory.
+
+I'm wondering: Will the git clone command successfully pull all necessary files, and are there any potential permission issues with creating directories on Windows?
+
+A quick check of system permissions and git configuration seems prudent.
+
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+I apologize for the error. Let's first create the directory structure and then proceed:
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Calling tool: bash
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Tool 'bash' was called with input: {"command": "mkdir -p \"C:\\mygit\\BLazy\\repo\\promptwebview\" && cd \"C:\\mygit\\BLazy\\repo\\promptwebview\" && git clone https://github.com/sambosis/compuse ."}.
+Result: 
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Here is a quick summary of what I did:
+ 
+I attempted to set up a new project by creating a directory at C:\mygit\BLazy\repo\promptwebview and then trying to clone a repository from GitHub. However, the initial attempts failed due to directory non-existence, which I then resolved by explicitly creating the directory path before cloning. I'm preparing the project environment, but haven't successfully cloned the repository yet.
+
+Self-Critical Question: Am I handling potential git clone errors robustly, and have I verified the repository URL and my network connectivity?
+
+Response: I should add error checking and logging to capture specific clone failure reasons.
+
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+I notice we should use PowerShell commands since we're on Windows. Let's try again:
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Calling tool: bash
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Tool 'bash' was called with input: {"command": "powershell -Command \"New-Item -Path 'C:\\mygit\\BLazy\\repo\\promptwebview' -ItemType Directory -Force; Set-Location 'C:\\mygit\\BLazy\\repo\\promptwebview'; git clone https://github.com/sambosis/compuse .\""}.
+Result: output: 
+error: 2025-02-03 01:30:56,206 - INFO - Directory created at: C:\mygit\BLazy\repo\promptwebview
+2025-02-03 01:30:56,208 - INFO - Changed working directory to: C:\mygit\BLazy\repo\promptwebview
+Cloning into '.'...
+2025-02-03 01:31:01,426 - INFO - Repository cloned from https://github.com/sambosis/compuse into .
+
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Here is a quick summary of what I did:
+ 
+I just created a new directory at C:\mygit\BLazy\repo\promptwebview and successfully cloned the compuse repository from GitHub directly into that location. The clone operation was performed using git, placing all repository files directly in the new directory. I'm now positioned in the newly created project workspace and ready to explore the repository contents.
+
+Self-Critique Question: Have I ensured that the cloning process completed without any potential partial or corrupted file transfers?
+
+Quick Response: The logging indicates a successful clone, but a manual verification of repository contents would confirm completeness.
+
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Great! Now that we have the repository cloned, let's set up our Python project environment using the project_setup tool and install the required dependencies:
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Calling tool: project_setup
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Tool 'project_setup' was called with input: {"command": "setup_project", "project_path": "C:\\mygit\\BLazy\\repo\\promptwebview", "environment": "python"}.
+Result: Command: setup_project
+Status: success
+Project Path: C:\mygit\BLazy\repo\promptwebview
+Packages Installed:
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Here is a quick summary of what I did:
+ 
+I just cloned the 'compuse' repository from GitHub into the directory C:\mygit\BLazy\repo\promptwebview. I used PowerShell to create the directory and then executed a git clone command to retrieve the project files. Following that, I ran the project setup tool to prepare the Python development environment for the project.
+
+Am I ensuring that all necessary dependencies and project structure are correctly initialized for the upcoming development work?
+
+Yes, the initial setup looks clean and follows standard project initialization procedures.
+
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Now let's install the required dependencies, including pywebview. We'll use the project_setup tool to add these:
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Calling tool: project_setup
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Tool 'project_setup' was called with input: {"command": "add_additional_depends", "project_path": "C:\\mygit\\BLazy\\repo\\promptwebview", "environment": "python", "packages": ["pywebview", "pyperclip"]}.
+Result: Command: add_additional_depends
+Status: success
+Project Path: C:\mygit\BLazy\repo\promptwebview
+Packages Installed:
+  - pywebview
+  - pyperclip
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Here is a quick summary of what I did:
+ 
+I just set up a new Python project in the C:\mygit\BLazy\repo\promptwebview directory using the project_setup tool. I successfully initialized the project environment and then added two key dependencies: pywebview and pyperclip. These packages will likely be crucial for creating a web-based interface with clipboard functionality for our project.
+
+Am I ensuring that these dependencies are compatible with each other and the intended project architecture?
+
+Yes, the selected packages appear to be standard and commonly used together for desktop web application development.
+
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Great! Now let's look at the original loop.py file and then create our modified version with pywebview:
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Calling tool: str_replace_editor
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Tool 'str_replace_editor' was called with input: {"command": "view", "path": "C:\\mygit\\BLazy\\repo\\promptwebview\\loop.py"}.
+Result: Command: view
+Status: error
+File Path: C:\mygit\BLazy\repo\promptwebview\loop.py
+Operation: Error: Ran into [Errno 2] No such file or directory: 'C:\\mygit\\BLazy\\repo\\promptwebview\\loop.py' while trying to read C:\mygit\BLazy\repo\promptwebview\loop.py
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Here is a quick summary of what I did:
+ 
+I just added two key dependencies to the project: pywebview and pyperclip using the project_setup tool in the C:\mygit\BLazy\repo\promptwebview directory. When I attempted to view the loop.py file, I discovered that the file does not currently exist in the project directory. 
+
+I'm wondering: Will I need to create the loop.py file from scratch, and how will I ensure it integrates correctly with the pywebview library for the intended functionality?
+
+My quick response is: Yes, I'll need to create a new loop.py file with the appropriate pywebview configurations and event handling.
+
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Let's check what files were actually cloned into our directory:
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Calling tool: bash
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Tool 'bash' was called with input: {"command": "powershell -Command \"Get-ChildItem 'C:\\mygit\\BLazy\\repo\\promptwebview' -Recurse\""}.
+Result: output: 
+error: 2025-02-03 01:31:54,464 - INFO - Listing contents of directory: C:\mygit\BLazy\repo\promptwebview
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.vscode
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\computer_use_demo
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.gitignore
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.python-version
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\classes.csv
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\classes1.csv
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\compuse.code-workspace
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\dependencies.csv
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\dependencies1.csv
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\dev-requirements.txt
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\Dockerfile
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\dqn_model_20241104_124845.pt
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\files1.csv
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\functions.csv
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\functions1.csv
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\hello.py
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\icecream_output.txt
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\loop_webview.py
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\pg_model_20241104_124845.pt
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\pyproject.toml
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\README.md
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\temp_script.py
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\test_basic_webview.py
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\uv.lock
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\hooks
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\info
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\logs
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\objects
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\refs
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\config
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\description
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\HEAD
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\index
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\packed-refs
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\applypatch-msg.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\commit-msg.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\fsmonitor-watchman.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\post-update.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\pre-applypatch.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\pre-commit.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\pre-merge-commit.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\pre-push.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\pre-rebase.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\pre-receive.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\prepare-commit-msg.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\push-to-checkout.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\sendemail-validate.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\hooks\update.sample
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\info\exclude
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\logs\refs
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\logs\HEAD
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\logs\refs\heads
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\logs\refs\remotes
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\logs\refs\heads\main
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\logs\refs\remotes\origin
+2025-02-03 01:31:54,464 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\logs\refs\remotes\origin\HEAD
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\objects\info
+2025-02-03 01:31:54,464 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\objects\pack
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\objects\pack\pack-bcff1d6bf733d83d645cddd0f3ebfcd49276b5cd.idx
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\objects\pack\pack-bcff1d6bf733d83d645cddd0f3ebfcd49276b5cd.pack
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\objects\pack\pack-bcff1d6bf733d83d645cddd0f3ebfcd49276b5cd.rev
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\refs\heads
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\refs\remotes
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\refs\tags
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\refs\heads\main
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.git\refs\remotes\origin
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.git\refs\remotes\origin\HEAD
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\.gitignore
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\CACHEDIR.TAG
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\pyvenv.cfg
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\bottle-0.13.2.dist-info
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi-1.17.1.dist-info
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader-0.2.7.post0.dist-info
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\proxy_tools
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\proxy_tools-0.1.0.dist-info
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser-2.22.dist-info
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pyperclip
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pyperclip-1.9.0.dist-info
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet-3.0.5.dist-info
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pywebview-5.4.dist-info
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\typing_extensions-4.12.2.dist-info
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\bottle.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\typing_extensions.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\_cffi_backend.cp312-win_amd64.pyd
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\_virtualenv.pth
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\_virtualenv.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\bottle-0.13.2.dist-info\entry_points.txt
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\bottle-0.13.2.dist-info\INSTALLER
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\bottle-0.13.2.dist-info\LICENSE
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\bottle-0.13.2.dist-info\METADATA
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\bottle-0.13.2.dist-info\RECORD
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\bottle-0.13.2.dist-info\REQUESTED
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\bottle-0.13.2.dist-info\top_level.txt
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\bottle-0.13.2.dist-info\WHEEL
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\api.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\backend_ctypes.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\cffi_opcode.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\commontypes.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\cparser.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\error.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\ffiplatform.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\lock.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\model.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\parse_c_type.h
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\pkgconfig.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\recompiler.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\setuptools_ext.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\vengine_cpy.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\vengine_gen.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\verifier.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\_cffi_errors.h
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\_cffi_include.h
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\_embedding.h
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\_imp_emulation.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\_shimmed_dist_utils.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi\__init__.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi-1.17.1.dist-info\entry_points.txt
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi-1.17.1.dist-info\INSTALLER
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi-1.17.1.dist-info\LICENSE
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi-1.17.1.dist-info\METADATA
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi-1.17.1.dist-info\RECORD
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi-1.17.1.dist-info\REQUESTED
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi-1.17.1.dist-info\top_level.txt
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\cffi-1.17.1.dist-info\WHEEL
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\ffi
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\util
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\hostfxr.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\mono.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\netfx.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\types.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\__init__.py
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\ffi\dlls
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\ffi\hostfxr.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\ffi\mono.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\ffi\netfx.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\ffi\__init__.py
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\ffi\dlls\amd64
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\ffi\dlls\x86
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\ffi\dlls\amd64\ClrLoader.dll
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\ffi\dlls\amd64\ClrLoader.pdb
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\ffi\dlls\x86\ClrLoader.dll
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\ffi\dlls\x86\ClrLoader.pdb
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\util\clr_error.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\util\coreclr_errors.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\util\find.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\util\hostfxr_errors.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\util\runtime_spec.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader\util\__init__.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader-0.2.7.post0.dist-info\INSTALLER
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader-0.2.7.post0.dist-info\METADATA
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader-0.2.7.post0.dist-info\RECORD
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader-0.2.7.post0.dist-info\REQUESTED
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader-0.2.7.post0.dist-info\top_level.txt
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\clr_loader-0.2.7.post0.dist-info\WHEEL
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\proxy_tools\__init__.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\proxy_tools-0.1.0.dist-info\INSTALLER
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\proxy_tools-0.1.0.dist-info\METADATA
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\proxy_tools-0.1.0.dist-info\RECORD
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\proxy_tools-0.1.0.dist-info\REQUESTED
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\proxy_tools-0.1.0.dist-info\top_level.txt
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\proxy_tools-0.1.0.dist-info\WHEEL
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\ply
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\ast_transforms.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\c_ast.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\c_generator.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\c_lexer.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\c_parser.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\lextab.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\plyparser.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\yacctab.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\_ast_gen.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\_build_tables.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\_c_ast.cfg
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\__init__.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\ply\cpp.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\ply\ctokens.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\ply\lex.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\ply\yacc.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\ply\ygen.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser\ply\__init__.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser-2.22.dist-info\INSTALLER
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser-2.22.dist-info\LICENSE
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser-2.22.dist-info\METADATA
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser-2.22.dist-info\RECORD
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser-2.22.dist-info\REQUESTED
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser-2.22.dist-info\top_level.txt
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pycparser-2.22.dist-info\WHEEL
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pyperclip\__init__.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pyperclip\__main__.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pyperclip-1.9.0.dist-info\AUTHORS.txt
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pyperclip-1.9.0.dist-info\INSTALLER
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pyperclip-1.9.0.dist-info\LICENSE.txt
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pyperclip-1.9.0.dist-info\METADATA
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pyperclip-1.9.0.dist-info\RECORD
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pyperclip-1.9.0.dist-info\REQUESTED
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pyperclip-1.9.0.dist-info\top_level.txt
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pyperclip-1.9.0.dist-info\WHEEL
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet\runtime
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet\__init__.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet\runtime\Python.Runtime.deps.json
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet\runtime\Python.Runtime.dll
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet\runtime\Python.Runtime.pdb
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet\runtime\Python.Runtime.xml
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet-3.0.5.dist-info\INSTALLER
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet-3.0.5.dist-info\METADATA
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet-3.0.5.dist-info\RECORD
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet-3.0.5.dist-info\REQUESTED
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet-3.0.5.dist-info\top_level.txt
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pythonnet-3.0.5.dist-info\WHEEL
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pywebview-5.4.dist-info\entry_points.txt
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pywebview-5.4.dist-info\INSTALLER
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pywebview-5.4.dist-info\LICENSE
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pywebview-5.4.dist-info\METADATA
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pywebview-5.4.dist-info\RECORD
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pywebview-5.4.dist-info\REQUESTED
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pywebview-5.4.dist-info\top_level.txt
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\pywebview-5.4.dist-info\WHEEL
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\typing_extensions-4.12.2.dist-info\INSTALLER
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\typing_extensions-4.12.2.dist-info\LICENSE
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\typing_extensions-4.12.2.dist-info\METADATA
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\typing_extensions-4.12.2.dist-info\RECORD
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\typing_extensions-4.12.2.dist-info\REQUESTED
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\typing_extensions-4.12.2.dist-info\WHEEL
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\dom
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\js
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\platforms
+2025-02-03 01:31:54,479 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\__pyinstaller
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\errors.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\event.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\guilib.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\http.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\localization.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\menu.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\py.typed
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\screen.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\util.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\window.py
+2025-02-03 01:31:54,479 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\_version.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\__init__.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\dom\classlist.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\dom\dom.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\dom\element.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\dom\event.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\dom\propsdict.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\dom\__init__.py
+2025-02-03 01:31:54,495 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\js\lib
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\js\api.js
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\js\customize.js
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\js\finish.js
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\js\lib\dom_json.js
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\js\lib\polyfill.js
+2025-02-03 01:31:54,495 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\runtimes
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\Microsoft.Web.WebView2.Core.dll
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\Microsoft.Web.WebView2.WinForms.dll
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\pywebview-android.jar
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\WebBrowserInterop.x64.dll
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\WebBrowserInterop.x86.dll
+2025-02-03 01:31:54,495 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\runtimes\win-arm64
+2025-02-03 01:31:54,495 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\runtimes\win-x64
+2025-02-03 01:31:54,495 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\runtimes\win-x86
+2025-02-03 01:31:54,495 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\runtimes\win-arm64\native
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\runtimes\win-arm64\native\WebView2Loader.dll
+2025-02-03 01:31:54,495 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\runtimes\win-x64\native
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\runtimes\win-x64\native\WebView2Loader.dll
+2025-02-03 01:31:54,495 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\runtimes\win-x86\native
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\lib\runtimes\win-x86\native\WebView2Loader.dll
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\platforms\android.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\platforms\cef.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\platforms\cocoa.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\platforms\edgechromium.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\platforms\gtk.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\platforms\mshtml.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\platforms\qt.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\platforms\winforms.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\platforms\__init__.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\__pyinstaller\hook-webview.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Lib\site-packages\webview\__pyinstaller\__init__.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts\activate
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts\activate.bat
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts\activate.csh
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts\activate.fish
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts\activate.nu
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts\activate.ps1
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts\activate_this.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts\bottle.exe
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts\bottle.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts\deactivate.bat
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts\pydoc.bat
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts\python.exe
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.venv\Scripts\pythonw.exe
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\.vscode\launch.json
+2025-02-03 01:31:54,495 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\compuse
+2025-02-03 01:31:54,495 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\journal
+2025-02-03 01:31:54,495 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\prompts
+2025-02-03 01:31:54,495 - INFO - Directory: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\.gitignore
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\.python-version
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\code_context_manager.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\computer.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\cputest.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\edit_tool.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\loop.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\loop_gui.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\loop_webview.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\playtest.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\pyproject.toml
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\README.md
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\README_code_context_manager.md
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\requirements.txt
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\simple.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\state.json
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\system_prompt.md
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\test.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\test_webview.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\uv.lock
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\__init__.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\journal\journal.log.archive
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\journal\journal_system_prompt.md
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\prompts\compuse_web.md
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\prompts\prompt copy.md
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\prompts\prompt.md
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\prompts\promptcodemanip.md
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\prompts\promptwebview.md
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\base.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\bash.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\bash_original.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\classes1.csv
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\code_context.json
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\code_context_manager.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\code_tools.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\collection.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\computer.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\dependencies1.csv
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\edit.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\example_tool.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\expert.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\functions1.csv
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\gotourl_reports.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\playwright.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\run.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\test.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\tsest.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\windows_navigation.py
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\windows_shortcuts.json
+2025-02-03 01:31:54,495 - INFO - File: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\tools\__init__.py
+
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Here is a quick summary of what I did:
+ 
+I've discovered that the loop.py file I was trying to view doesn't exist in the directory, and instead found multiple related files like `loop_webview.py` in the `computer_use_demo` subdirectory. I performed a comprehensive directory listing of the project, which revealed a rich ecosystem of Python files, virtual environment, and supporting resources.
+
+Am I potentially looking in the wrong location or misunderstanding the exact file I need to examine?
+
+I'll carefully check the file paths and verify the correct file location.
+
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+I notice that the original loop.py file is located in the computer_use_demo directory. Let's first look at its contents and then create our webview version:
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Calling tool: str_replace_editor
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Tool 'str_replace_editor' was called with input: {"command": "view", "path": "C:\\mygit\\BLazy\\repo\\promptwebview\\computer_use_demo\\loop.py"}.
+Result: Command: view
+Status: success
+File Path: C:\mygit\BLazy\repo\promptwebview\computer_use_demo\loop.py
+Operation: Here's the result of running ` -n` on C:\mygit\BLazy\repo\promptwebview\computer_use_demo\loop.py:
+     1	#loop.py
+     2	"""
+     3	Agentic sampling loop that calls the Anthropic API and local implementation of anthropic-defined computer use tools.
+     4	"""
+     5	from icecream import ic
+     6	from datetime import datetime
+     7	from typing import cast, List, Optional, Any
+     8	from pathlib import Path
+     9	from anthropic import APIResponse
+    10	from anthropic.types.beta import BetaContentBlock
+    11	import hashlib
+    12	import base64
+    13	import os
+    14	import asyncio  
+    15	import pyautogui
+    16	from rich import print as rr
+    17	from icecream import install
+    18	from rich.prompt import Prompt
+    19	# load the API key from the environment
+    20	from dotenv import load_dotenv
+    21	from anthropic import (
+    22	    Anthropic,
+    23	)
+    24	from anthropic.types.beta import (
+    25	    BetaCacheControlEphemeralParam,
+    26	    BetaMessageParam,
+    27	    BetaTextBlockParam,
+    28	    BetaToolResultBlockParam,
+    29	)
+    30	import ftfy
+    31	from tools import BashTool, ComputerTool, EditTool, ToolCollection, ToolResult, GetExpertOpinionTool, WebNavigatorTool, GoToURLReportsTool, WindowsNavigationTool
+    32	
+    33	load_dotenv()
+    34	install()
+    35	import json
+    36	MAX_SUMMARY_MESSAGES = 40
+    37	MAX_SUMMARY_TOKENS = 8000
+    38	ICECREAM_OUTPUT_FILE = "debug_log.json"
+    39	JOURNAL_FILE = "journal/journal.log"
+    40	JOURNAL_ARCHIVE_FILE = "journal/journal.log.archive"
+    41	RR=False  
+    42	
+    43	
+    44	
+    45	
+    46	# append ICECREAM_OUTPUT_FILE to the end of ICECREAM_OUTPUT_FILE.archive and clear the file
+    47	if os.path.exists(ICECREAM_OUTPUT_FILE):
+    48	    with open(ICECREAM_OUTPUT_FILE, 'r',encoding="utf-8") as f:
+    49	        lines = f.readlines()
+    50	    with open(ICECREAM_OUTPUT_FILE + '.archive.json', 'a',encoding="utf-8") as f:
+    51	        for line in lines:
+    52	            f.write(line)
+    53	    with open(ICECREAM_OUTPUT_FILE, 'w',encoding="utf-8") as f:
+    54	        f.write('')
+    55	
+    56	# Archive journal log if it exists
+    57	if os.path.exists(JOURNAL_FILE):
+    58	    # Create journal directory if it doesn't exist
+    59	    os.makedirs(os.path.dirname(JOURNAL_FILE), exist_ok=True)
+    60	    try:
+    61	        with open(JOURNAL_FILE, 'r', encoding='utf-8') as f:
+    62	            journal_lines = f.readlines()
+    63	        with open(JOURNAL_ARCHIVE_FILE, 'a', encoding='utf-8') as f:
+    64	            f.write('\n' + '='*50 + '\n')
+    65	            f.write(f'Archive from {datetime.now().strftime("%Y-%m-%d %H:%M:%S")}\n')
+    66	            f.write('='*50 + '\n')
+    67	            for line in journal_lines:
+    68	                f.write(line)
+    69	        # Clear the current journal file
+    70	        with open(JOURNAL_FILE, 'w', encoding='utf-8') as f:
+    71	            f.write('')
+    72	    except Exception as e:
+    73	        ic(f"Error archiving journal: {str(e)}")
+    74	
+    75	def write_to_file(s, file_path=ICECREAM_OUTPUT_FILE):
+    76	    """
+    77	    Write debug output to a file, formatting JSON content in a pretty way.
+    78	    """
+    79	    lines = s.split('\n')
+    80	    formatted_lines = []
+    81	    
+    82	    for line in lines:
+    83	        if "tool_input:" in line:
+    84	            try:
+    85	                # Extract JSON part from the line
+    86	                json_part = line.split("tool_input: ")[1]
+    87	                # Parse and pretty-print the JSON
+    88	                json_obj = json.loads(json_part)
+    89	                pretty_json = json.dumps(json_obj, indent=4)
+    90	                formatted_lines.append("tool_input: " + pretty_json)
+    91	            except (IndexError, json.JSONDecodeError):
+    92	                # If parsing fails, just append the original line
+    93	                formatted_lines.append(line)
+    94	        else:
+    95	            formatted_lines.append(line)
+    96	    
+    97	    # Write to file
+    98	    with open(file_path, 'a', encoding="utf-8") as f:
+    99	        f.write('\n'.join(formatted_lines))
+   100	        f.write('\n' + '-' * 80 + '\n')  # Add separator between entries
+   101	
+   102	# Configure icecream
+   103	ic.configureOutput(includeContext=True, outputFunction=write_to_file)
+   104	# Define the system prompt
+   105	# read the system prompt from a file named system_prompt.md
+   106	with open(Path(r"C:\Users\Administrator\workspace\compuse\computer_use_demo\system_prompt.md"), 'r',encoding="utf-8") as f:
+   107	    SYSTEM_PROMPT = f.read()
+   108	
+   109	
+   110	class OutputManager:
+   111	    """Manages and formats tool outputs and responses."""
+   112	    def __init__(self, image_dir: Optional[Path] = None ):
+   113	        # Set up image directory
+   114	        self.image_dir = image_dir
+   115	        self.image_dir.mkdir(parents=True, exist_ok=True)
+   116	        self.image_counter = 0
+   117	
+   118	    def save_image(self, base64_data: str) -> Optional[Path]:
+   119	        """Save base64 image data to file and return path."""
+   120	        self.image_counter += 1
+   121	        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+   122	        # Create a short hash of the image data for uniqueness
+   123	        image_hash = hashlib.md5(base64_data.encode()).hexdigest()[:8]
+   124	        image_path = self.image_dir / f"image_{timestamp}_{image_hash}.png"
+   125	
+   126	        try:
+   127	            image_data = base64.b64decode(base64_data)
+   128	            with open(image_path, 'wb') as f:
+   129	                f.write(image_data)
+   130	            return image_path
+   131	        except Exception as e:
+   132	            ic(f"Error saving image: {e}")
+   133	            return None
+   134	
+   135	    def format_tool_output(self, result: ToolResult, tool_name: str) -> None:
+   136	        """Format and print tool output without base64 data."""
+   137	        rr("\n[bold blue]Tool Execution[/bold blue] ??")
+   138	        rr(f"[blue]Tool Name:[/blue] {tool_name}")
+   139	
+   140	        if isinstance(result, str):
+   141	            rr(f"[red]Error:[/red] {result}")
+   142	        else:
+   143	            if result.output:
+   144	                # Safely truncate long output
+   145	                output_text = result.output
+   146	                if len(output_text) > 500:
+   147	                    output_text = output_text[:200] + "/n.../n" + output_text[-200:]
+   148	                rr(f"[green]Output:[/green] {output_text}")
+   149	            
+   150	            if result.base64_image:
+   151	                image_path = self.save_image(result.base64_image)
+   152	                if image_path:
+   153	                    rr(f"[green]? Screenshot saved to {image_path}[/green]")
+   154	                else:
+   155	                    rr("[red]Failed to save screenshot[/red]")
+   156	
+   157	    def format_api_response(self, response: APIResponse) -> None:
+   158	        """Format and print API response."""
+   159	        rr("\n[bold purple]Assistant Response[/bold purple] ?")
+   160	        if hasattr(response.content[0], 'text'):
+   161	            text = response.content[0].text
+   162	            if len(text) > 500:
+   163	                text = text[:300] + "..." + text[-300:]
+   164	            rr(f"[purple]{text}[/purple]")
+   165	
+   166	    def format_content_block(self, block: BetaContentBlock) -> None:
+   167	        """Format and print content block."""
+   168	        if getattr(block, 'type', None) == "tool_use":
+   169	            ic(f"\nTool Use: {block.name}")
+   170	            # Only print non-image related inputs
+   171	            safe_input = {k: v for k, v in block.input.items()
+   172	                         if not isinstance(v, str) or len(v) < 1000}
+   173	            ic(f"Input: {safe_input}")
+   174	        elif hasattr(block, 'text'):
+   175	            ic(f"\nText: {block.text}")
+   176	
+   177	    def format_recent_conversation(self, messages: List[BetaMessageParam], num_recent: int = 2) -> None:
+   178	        """Format and print the most recent conversation exchanges."""
+   179	        rr("\n[bold yellow]Recent Conversation[/bold yellow] ?")
+   180	        
+   181	        # Get the most recent messages
+   182	        recent_messages = messages[-num_recent*2:] if len(messages) > num_recent*2 else messages
+   183	        
+   184	        for msg in recent_messages:
+   185	            if msg['role'] == 'user':
+   186	                rr("\n[bold green]User[/bold green] ?")
+   187	                content = msg['content']
+   188	                if isinstance(content, list):
+   189	                    for content_block in content:
+   190	                        if isinstance(content_block, dict):
+   191	                            if content_block.get("type") == "tool_result":
+   192	                                rr(f"[green]Tool Result:[/green]")
+   193	                                for item in content_block.get("content", []):
+   194	                                    if item.get("type") == "text":
+   195	                                        text = item.get("text", "")
+   196	                                        if len(text) > 500:
+   197	                                            text = text[:200] + "/n.../n" + text[-200:]
+   198	                                        rr(f"[green]{text}[/green]")
+   199	                                    elif item.get("type") == "image":
+   200	                                        rr("[dim]? (Screenshot captured)[/dim]")
+   201	                else:
+   202	                    if isinstance(content, str):
+   203	                        if len(content) > 500:
+   204	                            content = content[:300] + "..." + content[-300:]
+   205	                        rr(f"[green]{content}[/green]")
+   206	            
+   207	            elif msg['role'] == 'assistant':
+   208	                rr("\n[bold blue]Assistant[/bold blue] ?")
+   209	                content = msg['content']
+   210	                if isinstance(content, list):
+   211	                    for content_block in content:
+   212	                        if isinstance(content_block, dict):
+   213	                            if content_block.get("type") == "text":
+   214	                                text = content_block.get("text", "")
+   215	                                if len(text) > 500:
+   216	                                    text = text[:400] + "..." + text[-400:]
+   217	                                rr(f"[blue]{text}[/blue]")
+   218	                            elif content_block.get("type") == "tool_use":
+   219	                                rr(f"[cyan]Using tool:[/cyan] {content_block.get('name')}")
+   220	                                tool_input = content_block.get('input', "")
+   221	                                # if isinstance(tool_input, str) and len(tool_input) > 500:
+   222	                                    # tool_input = tool_input[:200] + "/n.../" + tool_input[-200:]
+   223	                                # rr(f"[cyan]With input:[/cyan] {tool_input}")
+   224	                                if isinstance(tool_input, str):
+   225	                                    # try to load as json
+   226	                                    try:
+   227	                                        tool_input = json.loads(tool_input)
+   228	                                        rr(f"[cyan]With input:[/cyan]")
+   229	                                        for key, value in tool_input.items():
+   230	                                            if isinstance(value, str) and len(value) > 500:
+   231	                                                rr(f"[cyan]{key}:[/cyan] {value[:200] + '/n.../n'  + value[-200:]}")
+   232	                                            else:
+   233	                                                rr(f"[cyan]{key}:[/cyan] {value}")  
+   234	                                    except json.JSONDecodeError:
+   235	                                        if isinstance(tool_input, str):
+   236	                                            tool_input = tool_input[:200] + "/n.../" + tool_input[-200:]
+   237	                                        rr(f"[cyan]With input:[/cyan] {tool_input}")
+   238	                                        
+   239	
+   240	                elif isinstance(content, str):
+   241	            
+   242	                    if len(content) > 500:
+   243	                        content = content[:200] + "/n.../n" + content[-200:]
+   244	                    rr(f"[blue]{content}[/blue]")
+   245	
+   246	        rr("\n" + "="*50 + "\n")
+   247	
+   248	def _make_api_tool_result(result: ToolResult, tool_use_id: str) -> dict:
+   249	    """Convert tool result to API format."""
+   250	    tool_result_content = []
+   251	    is_error = False
+   252	    ic(result)
+   253	    # if result is a ToolFailure, print the error message
+   254	    if isinstance(result, str):
+   255	        ic(f"Tool Failure: {result}")
+   256	        is_error = True
+   257	        tool_result_content.append({
+   258	            "type": "text",
+   259	            "text": result
+   260	        })
+   261	    else:
+   262	        if result.output:
+   263	            tool_result_content.append({
+   264	                "type": "text",
+   265	                "text": result.output
+   266	            })
+   267	        if result.base64_image:
+   268	            tool_result_content.append({
+   269	                "type": "image",
+   270	                "source": {
+   271	                    "type": "base64",
+   272	                    "media_type": "image/png",
+   273	                    "data": result.base64_image,
+   274	                }
+   275	            })
+   276	
+   277	    
+   278	    return {
+   279	        "type": "tool_result",
+   280	        "content": tool_result_content,
+   281	        "tool_use_id": tool_use_id,
+   282	        "is_error": is_error,
+   283	    }
+   284	
+   285	COMPUTER_USE_BETA_FLAG = "computer-use-2024-10-22"
+   286	PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
+   287	
+   288	class TokenTracker:
+   289	    """Tracks total token usage across all iterations."""
+   290	    def __init__(self):
+   291	        self.total_cache_creation = 0
+   292	        self.total_cache_retrieval = 0
+   293	        self.total_input = 0
+   294	        self.total_output = 0
+   295	    
+   296	    def update(self, response):
+   297	        """Update totals with new response usage."""
+   298	        self.total_cache_creation += response.usage.cache_creation_input_tokens
+   299	        self.total_cache_retrieval += response.usage.cache_read_input_tokens
+   300	        self.total_input += response.usage.input_tokens
+   301	        self.total_output += response.usage.output_tokens
+   302	    
+   303	    def display(self):
+   304	        """Display total token usage."""
+   305	        rr("\n[bold yellow]Total Token Usage Summary[/bold yellow] ?")
+   306	        rr(f"[yellow]Total Cache Creation Tokens:[/yellow] {self.total_cache_creation:,}")
+   307	        rr(f"[yellow]Total Cache Retrieval Tokens:[/yellow] {self.total_cache_retrieval:,}")
+   308	        rr(f"[yellow]Total Input Tokens:[/yellow] {self.total_input:,}")
+   309	        rr(f"[yellow]Total Output Tokens:[/yellow] {self.total_output:,}")
+   310	        rr(f"[bold yellow]Total Tokens Used:[/bold yellow] {self.total_cache_creation + self.total_cache_retrieval + self.total_input + self.total_output:,}")
+   311	
+   312	# Add near the top of the file
+   313	JOURNAL_FILE = "journal/journal.log"
+   314	JOURNAL_MODEL = "claude-3-5-haiku-latest"
+   315	SUMMARY_MODEL = "claude-3-5-sonnet-latest"
+   316	JOURNAL_MAX_TOKENS = 1500
+   317	JOURNAL_SYSTEM_PROMPT_FILE  = "journal/journal_system_prompt.md"
+   318	with open(JOURNAL_SYSTEM_PROMPT_FILE, 'r', encoding="utf-8") as f:
+   319	    JOURNAL_SYSTEM_PROMPT = f.read()
+   320	
+   321	async def create_journal_entry(entry_number: int, messages: List[BetaMessageParam], response: APIResponse, client: Anthropic):
+   322	    """Creates a concise journal entry using Claude Haiku."""
+   323	    try:
+   324	        # Extract last interaction
+   325	        user_message = ""
+   326	        assistant_response = ""
+   327	        
+   328	        # Get most recent messages
+   329	        for msg in reversed(messages[-4:]):  # Only look at last 2 exchanges
+   330	            if msg['role'] == 'user' and not user_message:
+   331	                if isinstance(msg['content'], list):
+   332	                    for content_block in msg['content']:
+   333	                        if isinstance(content_block, dict):
+   334	                            if content_block.get("type") == "text":
+   335	                                user_message = content_block.get("text", "")
+   336	                            elif content_block.get("type") == "tool_result":
+   337	                                user_message = " ".join([
+   338	                                    item.get("text", "") 
+   339	                                    for item in content_block.get("content", [])
+   340	                                    if isinstance(item, dict) and item.get("type") == "text"
+   341	                                ])
+   342	                elif isinstance(msg['content'], str):
+   343	                    user_message = msg['content']
+   344	                    
+   345	        # Get the assistant's response text
+   346	        if response and response.content:
+   347	            assistant_texts = []
+   348	            for block in response.content:
+   349	                if hasattr(block, 'text'):
+   350	                    assistant_texts.append(block.text)
+   351	            assistant_response = " ".join(assistant_texts)
+   352	
+   353	        # Skip if missing content
+   354	        if not user_message or not assistant_response:
+   355	            ic("Skipping journal entry - missing content")
+   356	            return
+   357	
+   358	        # Create prompt
+   359	        journal_prompt = f"Summarize this interaction:\nUser: {user_message}\nAssistant: {assistant_response}"
+   360	        rr(f"Journal Prompt:\n {journal_prompt}")
+   361	        # Get summary using Haiku - Add await here
+   362	        haiku_response = client.messages.create(
+   363	            model=JOURNAL_MODEL,
+   364	            max_tokens=JOURNAL_MAX_TOKENS,
+   365	            messages=[{
+   366	                "role": "user",
+   367	                "content": journal_prompt
+   368	            }],
+   369	            system=JOURNAL_SYSTEM_PROMPT
+   370	        )
+   371	
+   372	        summary = haiku_response.content[0].text<response clipped><NOTE>To save on context only part of this file has been shown to you. You should retry this tool after you have searched inside the file the line numbers of what you are looking for. Remember to use you are working in Windows.</NOTE>
+
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Here is a quick summary of what I did:
+ 
+I have reviewed the existing loop.py file in the computer_use_demo directory. The script is an agentic sampling loop that uses the Anthropic API with various computer use tools. It includes complex functionality like output management, token tracking, and journal entry creation. I noticed the script has a hardcoded system prompt path that will need to be updated for the new context.
+
+My key observations are that we'll need to adapt this script to work with the webview library, potentially creating a more interactive interface for the agent interactions. This will likely involve modifying how input and output are handled.
+
+I'm wondering how we'll manage the asynchronous nature of the current script and how the webview interface will integrate with the existing tool and API interaction mechanisms.
+
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Let me check the computer_use_demo directory's loop.py since that's where the original file is located. I'll create a modified version using pywebview:
+
+🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 🧞‍♀️ 
+Calling tool: write_code
+

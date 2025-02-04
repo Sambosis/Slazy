@@ -1,0 +1,322 @@
+🤡 🤡 🤡 🤡 🤡 
+I need you to review the repo located at https://github.com/sambosis/BLazy 
+It's main entry point is a file named loop_live.py
+
+It calls an LLM in an agentic manner to complete a task.
+
+You should create a more advanced Jupyter Notebook that can be used to showcase more of it's full capabilites.
+This will largely be  making calls to the tools located in the tools directory.
+The notebook should both contain everything that is needed including any package installs or git operations that will be needed to run them.Your project directory is C:\mygit\BLazy\repo\blazie1. You need to make sure that all files you create and work you do is done in that directory. 
+
+
+🤡 🤡 🤡 🤡 🤡 
+I need you to review the repo located at https://github.com/sambosis/BLazy 
+It's main entry point is a file named loop_live.py
+
+It calls an LLM in an agentic manner to complete a task.
+
+You should create a more advanced Jupyter Notebook that can be used to showcase more of it's full capabilites.
+This will largely be  making calls to the tools located in the tools directory.
+The notebook should both contain everything that is needed including any package installs or git operations that will be needed to run them.Your project directory is C:\mygit\BLazy\repo\blazie1. You need to make sure that all files you create and work you do is done in that directory. 
+
+
+🤡 🤡 🤡 🤡 🤡 
+
+['Total Token Usage 📈', 'Total Cache Creation: 3,059', 'Total Cache Retrieval: 0', 'Total Output: 196', 'Total Tokens: 3,561 with a total cost of $0.02 USD.']
+
+🤡 🤡 🤡 🤡 🤡 
+Command: setup_project
+Status: success
+Project Path: C:\mygit\BLazy\repo\blazie1
+Packages Installed:
+
+🤡 🤡 🤡 🤡 🤡 
+
+['Total Token Usage 📈', 'Total Cache Creation: 3,695', 'Total Cache Retrieval: 3,059', 'Total Output: 315', 'Total Tokens: 7,377 with a total cost of $0.02 USD.']
+
+🤡 🤡 🤡 🤡 🤡 
+Title: GitHub - Sambosis/BLazy
+
+
+Headings:
+H1: Search code, repositories, users, issues, pull requests...
+H1: Provide feedback
+H1: Saved searches
+H1: Sambosis/BLazy
+H1: Project Name
+H2: Navigation Menu
+H2: Use saved searches to filter your results more quickly
+H2: Folders and files
+H2: Latest commit
+H2: History
+H2: Repository files navigation
+H2: Project Purpose
+H2: Key Features
+H2: Setup Instructions
+H2: Usage Examples
+H2: Contribution Guidelines
+H2: License
+H2: About
+H2: Releases
+H2: Packages0
+H2: Languages
+H2: Footer
+H3: Resources
+H3: Stars
+H3: Watchers
+H3: Forks
+H3: Footer navigation
+
+
+Main Content:
+Sambosis / BLazy Public 0 stars 0 forks Branches Tags Activity Star Notifications You must be signed in to change notification settings Code Issues 0 Pull requests 0 Actions Projects 0 Security Insights Additional navigation options Code Issues Pull requests Actions Projects Security Insights Sambosis/BLazy idkhere 18 Branches 0 Tags Go to file Code Folders and files Name Name Last commit message Last commit date Latest commit History 51 Commits .devcontainer .devcontainer .vscode .vscode cache cache journal journal logs logs prompts prompts system_prompt system_prompt tools tools utils utils .gitignore .gitignore .python-version .python-version README.md README.md config.py config.py load_constants.py load_constants.py loop_live.py loop_live.py mytest.ipynb mytest.ipynb pyproject.toml pyproject.toml requirements.txt requirements.txt test_env.py test_env.py uv.lock uv.lock View all files Repository files navigation README Project Name Project Purpose This project aims to provide a comprehensive tool for code analysis and visualization. It includes features for setting up, running, and contributing to the project, as well as detailed documentation and error handling. Key Features Documentation : Clear instructions on how to set up, run, and contribute to the project. Code Organization : Grouping related files and modules together. Error Handling : Informative error messages and graceful exception handling. Testing : Comprehensive testing strategy including unit tests and integration tests. Code Quality : Use of code quality tools like linters and formatters. Dependencies : Up-to-date and necessary dependencies. Environment Configuration : Effective management of different environments. Logging : Robust logging system. Security : Implementation of best practices to secure the application. Performance : Optimization of the application's performance. Setup Instructions Clone the repository : git clone https://github.com/yourusername/your-repo-name.git cd your-repo-name Create a virtual environment : python -m venv venv source venv/bin/activate # On Windows use `venv\Scripts\activate` Install dependencies : pip install -r requirements.txt Set up environment variables : Create a .env file in the root directory and add the necessary environment variables. Refer to .env.example for the required variables. Run the application : python main.py Usage Examples Running the application : python main.py Running tests : pytest Contribution Guidelines Fork the repository . Create a new branch : git checkout -b feature-branch Make your changes . Commit your changes : git commit -m " Description of changes " Push to the branch : git push origin feature-branch Create a pull request . License This project is licensed under the MIT License. See the LICENSE file for details. About No description, website, or topics provided. Resources Readme Activity Stars 0 stars Watchers 1 watching Forks 0 forks Report repository Releases No releases published Packages 0 No packages published Languages Python 97.8% Jupyter Notebook 2.2%
+
+
+Links:
+- Skip to content: #start-of-content
+- Sign in: /login?return_to=https%3A%2F%2Fgithub.com%2Fsambosis%2FBLazy
+- GitHub CopilotWrite better code with AI: https://github.com/features/copilot
+- SecurityFind and fix vulnerabilities: https://github.com/features/security
+- ActionsAutomate any workflow: https://github.com/features/actions
+- CodespacesInstant dev environments: https://github.com/features/codespaces
+- IssuesPlan and track work: https://github.com/features/issues
+- Code ReviewManage code changes: https://github.com/features/code-review
+- DiscussionsCollaborate outside of code: https://github.com/features/discussions
+- Code SearchFind more, search less: https://github.com/features/code-search
+- All features: https://github.com/features
+- Documentation: https://docs.github.com
+- GitHub Skills: https://skills.github.com
+- Blog: https://github.blog
+- Enterprises: https://github.com/enterprise
+- Small and medium teams: https://github.com/team
+- Startups: https://github.com/enterprise/startups
+- Nonprofits: /solutions/industry/nonprofits
+- DevSecOps: /solutions/use-case/devsecops
+- DevOps: /solutions/use-case/devops
+- CI/CD: /solutions/use-case/ci-cd
+- View all use cases: /solutions/use-case
+- Healthcare: /solutions/industry/healthcare
+- Financial services: /solutions/industry/financial-services
+- Manufacturing: /solutions/industry/manufacturing
+- Government: /solutions/industry/government
+- View all industries: /solutions/industry
+- View all solutions: /solutions
+- AI: /resources/articles/ai
+- DevOps: /resources/articles/devops
+- Security: /resources/articles/security
+- Software Development: /resources/articles/software-development
+- View all: /resources/articles
+- Learning Pathways: https://resources.github.com/learn/pathways
+- White papers, Ebooks, Webinars: https://resources.github.com
+- Customer Stories: https://github.com/customer-stories
+- Partners: https://partner.github.com
+- Executive Insights: https://github.com/solutions/executive-insights
+- GitHub SponsorsFund open source developers: /sponsors
+- The ReadME ProjectGitHub community articles: https://github.com/readme
+- Topics: https://github.com/topics
+- Trending: https://github.com/trending
+- Collections: https://github.com/collections
+- Enterprise platformAI-powered developer platform: /enterprise
+- Advanced SecurityEnterprise-grade security features: https://github.com/enterprise/advanced-security
+- GitHub CopilotEnterprise-grade AI features: /features/copilot#enterprise
+- Premium SupportEnterprise-grade 24/7 support: /premium-support
+- Pricing: https://github.com/pricing
+- Search syntax tips: https://docs.github.com/search-github/github-code-search/understanding-github-code-search-syntax
+- documentation: https://docs.github.com/search-github/github-code-search/understanding-github-code-search-syntax
+- Sign in: /login?return_to=https%3A%2F%2Fgithub.com%2Fsambosis%2FBLazy
+- Sign up: /signup?ref_cta=Sign+up&ref_loc=header+logged+out&ref_page=%2F%3Cuser-name%3E%2F%3Crepo-name%3E&source=header-repo&source_repo=Sambosis%2FBLazy
+- Sambosis: /Sambosis
+- BLazy: /Sambosis/BLazy
+- 0stars: /Sambosis/BLazy/stargazers
+- 0forks: /Sambosis/BLazy/forks
+- Branches: /Sambosis/BLazy/branches
+- Tags: /Sambosis/BLazy/tags
+- Activity: /Sambosis/BLazy/activity
+- Star: /login?return_to=%2FSambosis%2FBLazy
+- Notifications: /login?return_to=%2FSambosis%2FBLazy
+- Code: /Sambosis/BLazy
+- Issues0: /Sambosis/BLazy/issues
+- Pull requests0: /Sambosis/BLazy/pulls
+- Actions: /Sambosis/BLazy/actions
+- Projects0: /Sambosis/BLazy/projects
+- Security: /Sambosis/BLazy/security
+- Insights: /Sambosis/BLazy/pulse
+- Code: /Sambosis/BLazy
+- Issues: /Sambosis/BLazy/issues
+- Pull requests: /Sambosis/BLazy/pulls
+- Actions: /Sambosis/BLazy/actions
+- Projects: /Sambosis/BLazy/projects
+- Security: /Sambosis/BLazy/security
+- Insights: /Sambosis/BLazy/pulse
+- 18Branches: /Sambosis/BLazy/branches
+- 0Tags: /Sambosis/BLazy/tags
+- 51 Commits: /Sambosis/BLazy/commits/idkhere/
+- .devcontainer: /Sambosis/BLazy/tree/idkhere/.devcontainer
+- .devcontainer: /Sambosis/BLazy/tree/idkhere/.devcontainer
+- .vscode: /Sambosis/BLazy/tree/idkhere/.vscode
+- .vscode: /Sambosis/BLazy/tree/idkhere/.vscode
+- cache: /Sambosis/BLazy/tree/idkhere/cache
+- cache: /Sambosis/BLazy/tree/idkhere/cache
+- journal: /Sambosis/BLazy/tree/idkhere/journal
+- journal: /Sambosis/BLazy/tree/idkhere/journal
+- logs: /Sambosis/BLazy/tree/idkhere/logs
+- logs: /Sambosis/BLazy/tree/idkhere/logs
+- prompts: /Sambosis/BLazy/tree/idkhere/prompts
+- prompts: /Sambosis/BLazy/tree/idkhere/prompts
+- system_prompt: /Sambosis/BLazy/tree/idkhere/system_prompt
+- system_prompt: /Sambosis/BLazy/tree/idkhere/system_prompt
+- tools: /Sambosis/BLazy/tree/idkhere/tools
+- tools: /Sambosis/BLazy/tree/idkhere/tools
+- utils: /Sambosis/BLazy/tree/idkhere/utils
+- utils: /Sambosis/BLazy/tree/idkhere/utils
+- .gitignore: /Sambosis/BLazy/blob/idkhere/.gitignore
+- .gitignore: /Sambosis/BLazy/blob/idkhere/.gitignore
+- .python-version: /Sambosis/BLazy/blob/idkhere/.python-version
+- .python-version: /Sambosis/BLazy/blob/idkhere/.python-version
+- README.md: /Sambosis/BLazy/blob/idkhere/README.md
+- README.md: /Sambosis/BLazy/blob/idkhere/README.md
+- config.py: /Sambosis/BLazy/blob/idkhere/config.py
+- config.py: /Sambosis/BLazy/blob/idkhere/config.py
+- load_constants.py: /Sambosis/BLazy/blob/idkhere/load_constants.py
+- load_constants.py: /Sambosis/BLazy/blob/idkhere/load_constants.py
+- loop_live.py: /Sambosis/BLazy/blob/idkhere/loop_live.py
+- loop_live.py: /Sambosis/BLazy/blob/idkhere/loop_live.py
+- mytest.ipynb: /Sambosis/BLazy/blob/idkhere/mytest.ipynb
+- mytest.ipynb: /Sambosis/BLazy/blob/idkhere/mytest.ipynb
+- pyproject.toml: /Sambosis/BLazy/blob/idkhere/pyproject.toml
+- pyproject.toml: /Sambosis/BLazy/blob/idkhere/pyproject.toml
+- requirements.txt: /Sambosis/BLazy/blob/idkhere/requirements.txt
+- requirements.txt: /Sambosis/BLazy/blob/idkhere/requirements.txt
+- test_env.py: /Sambosis/BLazy/blob/idkhere/test_env.py
+- test_env.py: /Sambosis/BLazy/blob/idkhere/test_env.py
+- uv.lock: /Sambosis/BLazy/blob/idkhere/uv.lock
+- uv.lock: /Sambosis/BLazy/blob/idkhere/uv.lock
+- README: #
+- LICENSE: /Sambosis/BLazy/blob/idkhere/LICENSE
+- Readme: #readme-ov-file
+- Activity: /Sambosis/BLazy/activity
+- 0stars: /Sambosis/BLazy/stargazers
+- 1watching: /Sambosis/BLazy/watchers
+- 0forks: /Sambosis/BLazy/forks
+- Report repository: /contact/report-content?content_url=https%3A%2F%2Fgithub.com%2FSambosis%2FBLazy&report=Sambosis+%28user%29
+- Releases: /Sambosis/BLazy/releases
+- Packages0: /users/Sambosis/packages?repo_name=BLazy
+- Python97.8%: /Sambosis/BLazy/search?l=python
+- Jupyter Notebook2.2%: /Sambosis/BLazy/search?l=jupyter-notebook
+- Terms: https://docs.github.com/site-policy/github-terms/github-terms-of-service
+- Privacy: https://docs.github.com/site-policy/privacy-policies/github-privacy-statement
+- Security: https://github.com/security
+- Status: https://www.githubstatus.com/
+- Docs: https://docs.github.com/
+- Contact: https://support.github.com?tags=dotcom-footer
+
+🤡 🤡 🤡 🤡 🤡 
+
+['Total Token Usage 📈', 'Total Cache Creation: 10,898', 'Total Cache Retrieval: 6,754', 'Total Output: 500', 'Total Tokens: 18,462 with a total cost of $0.05 USD.']
+
+🤡 🤡 🤡 🤡 🤡 
+Command: add_additional_depends
+Status: success
+Project Path: C:\mygit\BLazy\repo\blazie1
+Packages Installed:
+  - jupyter
+  - notebook
+  - openai
+  - python-dotenv
+  - langchain
+  - requests
+  - gitpython
+
+🤡 🤡 🤡 🤡 🤡 
+
+['Total Token Usage 📈', 'Total Cache Creation: 11,327', 'Total Cache Retrieval: 17,652', 'Total Output: 836', 'Total Tokens: 30,127 with a total cost of $0.06 USD.']
+
+🤡 🤡 🤡 🤡 🤡 
+{'role': 'user', 'content': [{'type': 'tool_result', 'content': [], 'tool_use_id': 'toolu_01E2VdsB2TUddBNJH98wMh4w', 'is_error': False}, {'type': 'text', 'text': 'Tool \'write_code\' was called with input: {"command": "write_code_to_file", "project_path": "C:\\\\mygit\\\\BLazy\\\\repo\\\\blazie1", "python_filename": "BLazy_Demo.ipynb", "code_description": "Create a Jupyter Notebook in Python that demonstrates the BLazy project capabilities. The notebook should include:\\n\\n1. Setup and Installation section:\\n- Git clone operations\\n- Environment setup\\n- Required package installation\\n- Configuration of environment variables\\n\\n2. Project Overview section:\\n- Description of BLazy\'s purpose\\n- Architecture overview\\n- Main components explanation\\n\\n3. Tool Demonstrations section:\\n- Examples of using tools from the tools directory\\n- Integration with loop_live.py\\n- Working with the LLM agent\\n\\n4. Interactive Examples section:\\n- Real-world use cases\\n- Code snippets demonstrating key features\\n- Error handling examples\\n\\nThe notebook should use Jupyter\'s markdown cells for documentation and code cells for executable content. Include proper error handling and comments."}.\nResult: ', 'cache_control': {'type': 'ephemeral'}}]}
+
+🤡 🤡 🤡 🤡 🤡 
+
+['Total Token Usage 📈', 'Total Cache Creation: 11,954', 'Total Cache Retrieval: 28,979', 'Total Output: 948', 'Total Tokens: 42,195 with a total cost of $0.07 USD.']
+
+🤡 🤡 🤡 🤡 🤡 
+Command: view
+Status: error
+File Path: C:\mygit\BLazy\repo\blazie1\BLazy_Demo.ipynb
+Operation: Error: Ran into [Errno 2] No such file or directory: 'C:\\mygit\\BLazy\\repo\\blazie1\\BLazy_Demo.ipynb' while trying to read C:\mygit\BLazy\repo\blazie1\BLazy_Demo.ipynb
+
+🤡 🤡 🤡 🤡 🤡 
+
+['Total Token Usage 📈', 'Total Cache Creation: 12,356', 'Total Cache Retrieval: 40,933', 'Total Output: 4,095', 'Total Tokens: 57,700 with a total cost of $0.12 USD.']
+
+🤡 🤡 🤡 🤡 🤡 
+Command: create
+Status: success
+File Path: C:\mygit\BLazy\repo\blazie1\BLazy_Demo.ipynb
+Operation: File created successfully
+
+🤡 🤡 🤡 🤡 🤡 
+response: The given Bash command navigates to a specific directory and opens a Jupyter Notebook file. In Python, we'll achieve this functionality by using the `os` module to change directories and the `subprocess` module to launch the Jupyter Notebook. We'll ensure the Python code is platform-independent, incorporate proper error handling, and utilize best practices:
+
+```python
+import os
+import subprocess
+import logging
+from pathlib import Path
+
+# Configure logging
+logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
+
+def open_jupyter_notebook(directory: Path, notebook_name: str):
+    """
+    Opens a Jupyter notebook file in the specified directory.
+
+    :param directory: Path to the target directory
+    :param notebook_name: Name of the Jupyter notebook file to be opened
+    """
+    try:
+        # Validate that the directory exists
+        if not directory.exists() or not directory.is_dir():
+            raise FileNotFoundError(f"The directory '{directory}' does not exist.")
+
+        # Construct the notebook path
+        notebook_path = directory / notebook_name
+        
+        # Validate that the notebook file exists
+        if not notebook_path.exists() or not notebook_path.is_file():
+            raise FileNotFoundError(f"The notebook '{notebook_name}' does not exist in '{directory}'.")
+
+        # Change to the target directory
+        os.chdir(directory)
+        
+        # Open the Jupyter notebook
+        logging.info(f"Opening Jupyter notebook '{notebook_name}' in directory '{directory}'.")
+        subprocess.run(['jupyter', 'notebook', notebook_name], check=True)
+
+    except FileNotFoundError as e:
+        logging.error(e)
+    except subprocess.CalledProcessError as e:
+        logging.error(f"Failed to open Jupyter Notebook: {e}")
+    except Exception as e:
+        logging.error(f"An unexpected error occurred: {e}")
+
+# Entry point
+if __name__ == "__main__":
+    project_directory = Path("C:/mygit/BLazy/repo/blazie1")
+    notebook_filename = "BLazy_Demo.ipynb"
+
+    open_jupyter_notebook(project_directory, notebook_filename)
+```
+
+### Explanation
+
+1. **Path and Logging**: It uses `pathlib.Path` for handling file paths, ensuring compatibility across different operating systems. `logging` is utilized to provide logs for better debugging and error messages.
+
+2. **Error Handling**: 
+   - Checks if the specified directory exists.
+   - Checks if the specified Jupyter Notebook exists.
+   - Uses exception handling to capture `FileNotFoundError`, subprocess errors, and any unforeseen errors.
+
+3. **Subprocess**: The `subprocess.run()` method is used to launch the Jupyter Notebook. The parameter `check=True` is used to raise an error if the command execution fails.
+
+This code setup provides comprehensive error handling and logging, ensuring robustness and maintainability.
+
