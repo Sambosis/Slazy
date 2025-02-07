@@ -8,6 +8,7 @@ from datetime import datetime
 from pathlib import Path
 from re import U
 from typing import Any, Callable, Dict, List, Optional, cast
+import webbrowser
 
 from config import *
 write_constants_to_file()
@@ -117,13 +118,72 @@ def filter_messages(messages: List[Dict]) -> List[Dict]:
                         break
     return filtered
 
-async def summarize_history(messages: List[Dict], display: AgentDisplayWebWithPrompt) -> str:
+
+async def reorganize_context(messages: List[BetaMessageParam], summary: str) -> str:
+    """ Reorganize the context by filtering and summarizing messages. """
+    conversation_text = ""
+    for msg in messages:
+        role = msg['role'].upper()
+        if isinstance(msg['content'], list):
+            for block in msg['content']:
+                if isinstance(block, dict):
+                    if block.get('type') == 'text':
+                        conversation_text += f"\n{role}: {block.get('text', '')}"
+                    elif block.get('type') == 'tool_result':
+                        for item in block.get('content', []):
+                            if item.get('type') == 'text':
+                                conversation_text += f"\n{role} (Tool Result): {item.get('text', '')}"
+        else:
+            conversation_text += f"\n{role}: {msg['content']}"
+        
+    summary_prompt = f"""I need a 2 part response from you. The first part of the response is to list everything that has been done already. 
+    You will be given a lot of context, mucch of which is repetitive, so you are only to list each thing done one time.
+    For each thing done (or attempted) list if it worked or not, and if not, why it didn't work.
+    You will probably be able to infer from the section labeled <NARATIVE>  </NARATIVE> what has been done. 
+    However you will need the info the section labeled <MESSAGES>   </MESSAGES> in order to figure out why it didn't work. 
+    You are to response to this needs to be inclosed in XML style tags called <COMPLETED>   </COMPETED>
+    This in a neatly organized outline format. 
+    The second part of the response is to list the steps that need to be taken to complete the task.
+    You will need to take the whole context into account in order to    figure out what needs to be done.
+    You must list between 0 (you have deemed the task complete) and 4 steps that need to be taken to complete the task.
+    You should try to devise a plan that uses the least possible steps to compete the task. 
+    Your response to this needs to be enclosed in XML style tags called <STEPS>   </STEPS>
+    Please make sure your steps are clear, concise, and in a logical order and actionable. 
+    Here is the Narative part:
+    <NARATIVE>
+    {summary}
+    </NARATIVE>
+    Here is the messages part:
+    <MESSAGES>
+    {conversation_text}
+    </MESSAGES>
+
+    Remeber to the formats request and to enclose your responses in <COMPLETED>  </COMPLETED> and <STEPS>  </STEPS> tags respectively.
     """
-    Summarize the given list of messages.
-    Here we reuse the existing summarize_recent_messages function.
-    """
-    summary = await summarize_recent_messages(messages, display)
-    return summary
+    sum_client = OpenAI()
+    model = "o3-mini"
+    response = sum_client.chat.completions.create(
+        model=model,
+        max_tokens=30000,
+        messages=[{
+            "role": "user",
+            "content": summary_prompt
+        }]
+    )
+    summary = completion.choices[0].message.content
+    start_tag = "<COMPLETED>"
+    end_tag = "</COMPLETED>"
+    if start_tag in summary and end_tag in summary:
+        completed_items = summary[summary.find(start_tag)+len(start_tag):summary.find(end_tag)]
+    else:
+        completed_items = "No completed items found."
+    start_tag = "<STEPS>"
+    end_tag = "</STEPS>"
+    if start_tag in summary and end_tag in summary:
+        steps = summary[summary.find(start_tag)+len(start_tag):summary.find(end_tag)]
+    else:
+        steps = "No steps found."
+    return completed_items, steps
 
 def aggregate_file_states() -> str:
     """
@@ -137,35 +197,19 @@ async def refresh_context_async(task: str, messages: List[Dict], display: AgentD
     and appending current file contents.
     """
     filtered = filter_messages(messages)
-    # If many messages remain, summarize the older ones (all except the last 10)
-    if len(filtered) > 10:
-        old_messages = filtered[:-10]
-        summary = get_all_summaries()
+    summary = get_all_summaries()
 
-        # summary = await summarize_history(old_messages, display)
-    else:
-        summary = get_all_summaries()
+    completed, steps = await reorganize_context(filtered, summary)
+
     file_contents = aggregate_file_states()
     combined_content = f"""Original request: {task}
-    Context and History Summary:
-    {summary}
-
-    Current Project Files:
+    Current Completed Project Files:
     {file_contents}
+    List if things we've done and what has worked or not:
+    {completed}
+    ToDo List of tasks in order to complete the task:
+    {steps}
     """
-    return combined_content
-
-# ──────────────────────────────────────────────────────────────────────────────
-# Existing refresh_context (for backward compatibility; now unused)
-def refresh_context(task):
-    """(Legacy) Combines first message with summaries and file contents."""
-    combined_summaries = get_all_summaries()
-    file_contents = extract_files_content()
-    combined_content = f"""Original request: {task}
-    Context and History:
-    {combined_summaries}
-    Current Project Files:
-    {file_contents}"""
     return combined_content
 
 # ──────────────────────────────────────────────────────────────────────────────
@@ -353,9 +397,9 @@ def get_all_summaries() -> str:
     if not QUICK_SUMMARIES:
         return "No summaries available yet."
     
-    combined = "Here's everything I've done:\n"
+    combined = "\n"
     for entry in QUICK_SUMMARIES:
-        combined += f"\n{entry}"
+        combined += f"{entry}\n"
     return combined
 
 async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key: str, max_tokens: int = 8000, display: AgentDisplayWebWithPrompt) -> List[BetaMessageParam]:
@@ -484,7 +528,7 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                     message_string = format_messages_to_string(messages)
                     f.write(message_string)
                     
-                if len(messages) > 12:
+                if len(messages) > 18:
                     last_3_messages = messages[-3:]
                     new_context = await refresh_context_async(task, messages, display)
                     messages = [{"role": "user", "content": new_context}]
@@ -531,15 +575,15 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                             # #display.live.start()
                             await asyncio.sleep(0.2)
                 if not tool_result_content:
-                    while True:
-                        rr("\nAwaiting User Input ⌨️")
-                        task = Prompt.ask("What would you like to do next? Enter 'no' to exit")
-                        if task.lower() in ["no", "n"]:
-                            running = False
-                            break
-                        if task:
-                            break
-                    messages.append({"role": "user", "content": task})
+                    # Inform the user on the web interface that input is awaited.
+                    display.add_message("assistant", "Awaiting User Input ⌨️ (Type your response in the web interface)")
+                    # Wait asynchronously for user input via SocketIO.
+                    user_input = await display.wait_for_user_input()
+                    if user_input.lower() in ["no", "n"]:
+                        running = False
+                    else:
+                        messages.append({"role": "user", "content": user_input})
+
                 token_tracker.update(response)
                 token_tracker.display(display)
                 messages_to_display = messages[-2:] if len(messages) > 1 else messages[-1:]
@@ -682,6 +726,8 @@ async def main_async():
     display = AgentDisplayWebWithPrompt()
     display.start_server()  # Start the SocketIO/Flask server in a background thread.
     print("Please navigate to http://localhost:5000/select_prompt to select or create a prompt.")
+    webbrowser.open("http://localhost:5000/select_prompt")
+
     # Keep the async main alive.
     while True:
         await asyncio.sleep(1)
