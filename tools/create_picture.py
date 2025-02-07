@@ -7,6 +7,7 @@ from enum import Enum
 from dotenv import load_dotenv
 load_dotenv()
 import os
+import PIL
 class PictureCommand(str, Enum):
     CREATE = "create"
 
@@ -40,15 +41,27 @@ class PictureGenerationTool(BaseAnthropicTool):
                     "output_path": {
                         "type": "string",
                         "description": "Path where the generated image will be saved"
+                    },
+                    "width": {
+                        "type": "integer",
+                        "description": "Optional width to resize the image"
+                    },
+                    "height": {
+                        "type": "integer",
+                        "description": "Optional height to resize the image"
                     }
                 },
                 "required": ["command", "prompt"]
             }
         }
 
-    async def generate_picture(self, prompt: str, output_path: str) -> dict:
+    async def generate_picture(self, prompt: str, output_path: str, width: int = None, height: int = None) -> dict:
         """Generates a picture using the Flux Schnell model"""
         try:
+            # Create output directory if it doesn't exist
+            output_dir = Path(output_path).parent
+            output_dir.mkdir(parents=True, exist_ok=True)
+
             input_data = {
                 "prompt": prompt
             }
@@ -58,15 +71,34 @@ class PictureGenerationTool(BaseAnthropicTool):
                 input=input_data
             )
 
-            # Save the generated image
+            output_files = []
             for index, item in enumerate(output):
                 output_file = f"{output_path}"
+                # Save original image
                 with open(output_file, "wb") as file:
-                    file.write(item.read())
+                    image_data = item.read()
+                    file.write(image_data)
+
+                # Resize if dimensions are provided
+                if width or height:
+                    img = PIL.Image.open(output_file)
+                    if width and height:
+                        new_size = (width, height)
+                    elif width:
+                        ratio = width / img.width
+                        new_size = (width, int(img.height * ratio))
+                    else:
+                        ratio = height / img.height
+                        new_size = (int(img.width * ratio), height)
+                    
+                    resized_img = img.resize(new_size, PIL.Image.LANCZOS)
+                    resized_img.save(output_file)
+
+                output_files.append(output_file)
 
             return {
                 "status": "success",
-                "output_files": [f"{i}_{output_file}" for i in range(len(output))],
+                "output_files": output_files,
                 "prompt": prompt
             }
         except Exception as e:
@@ -96,29 +128,31 @@ class PictureGenerationTool(BaseAnthropicTool):
         command: PictureCommand,
         prompt: str,
         output_path: str = "output",
+        width: int = None,
+        height: int = None,
         **kwargs,
     ) -> ToolResult:
         """Executes the picture generation command"""
         try:
             if self.display:
-                self.display.add_message("tool", f"PictureGenerationTool executing command: {command}")
+                self.display.add_message("user", f"PictureGenerationTool executing command: {command}")
             
             # output_path = Path(output_path)
             # output_path.mkdir(parents=True, exist_ok=True)
 
             if command == PictureCommand.CREATE:
-                result_data = await self.generate_picture(prompt, output_path)
+                result_data = await self.generate_picture(prompt, output_path, width, height)
             else:
                 return ToolResult(error=f"Unknown command: {command}")
 
             formatted_output = self.format_output(result_data)
 
             if self.display:
-                self.display.add_message("tool", f"PictureGenerationTool completed: {formatted_output}")
+                self.display.add_message("user", f"PictureGenerationTool completed: {formatted_output}")
             
             return ToolResult(output=formatted_output)
 
         except Exception as e:
             if self.display:
-                self.display.add_message("tool", f"PictureGenerationTool error: {str(e)}")
+                self.display.add_message("user", f"PictureGenerationTool error: {str(e)}")
             return ToolResult(error=f"Failed to execute {command}: {str(e)}")

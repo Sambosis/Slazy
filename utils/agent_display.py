@@ -42,7 +42,7 @@ class AgentDisplay:
         display = AgentDisplay()
         display.add_message("user", "Hello")
         display.add_message("assistant", "Hi there!")
-        display.add_message("tool", ("calculator", "2 + 2 = 4"))
+        display.add_message("user", ("calculator", "2 + 2 = 4"))
     """
     def __init__(self):
         self.user_messages = []

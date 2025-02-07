@@ -66,7 +66,7 @@ class EditTool(BaseAnthropicTool):
         
         # Add command type
         output_lines.append(f"Command: {data['command']}")
-        
+        self.display.add_message("user", f"EditTool Command: {data['command']}")
         # Add status
         output_lines.append(f"Status: {data['status']}")
         
@@ -97,7 +97,7 @@ class EditTool(BaseAnthropicTool):
         try:
             # Add display messages
             if self.display:
-                self.display.add_message("tool", f"EditTool executing command: {command} on path: {path}")
+                self.display.add_message("user", f"EditTool Executing Command: {command} on path: {path}")
 
             # Normalize the path first
             _path = self.normalize_path(path)
@@ -107,7 +107,9 @@ class EditTool(BaseAnthropicTool):
                     raise ToolError("Parameter `file_text` is required for command: create")
                 self.write_file(_path, file_text)
                 self._file_history[_path].append(file_text)
-                log_file_operation(_path, "create")                
+                log_file_operation(_path, "create")  
+                self.display.add_message("user", f"EditTool Command: {command}  successfully created file {_path} !")
+              
                 output_data = {
                     "command": "create",
                     "status": "success",
@@ -118,6 +120,7 @@ class EditTool(BaseAnthropicTool):
 
             elif command == "view":
                 result = await self.view(_path, view_range)
+                self.display.add_message("user", f"EditTool Command: {command}  successfully viewed file\n {str(result.output[:100])} !")
                 output_data = {
                     "command": "view",
                     "status": "success",
@@ -130,6 +133,9 @@ class EditTool(BaseAnthropicTool):
                 if not old_str:
                     raise ToolError("Parameter `old_str` is required for command: str_replace")
                 result = self.str_replace(_path, old_str, new_str)
+                self.display.add_message("user", f"EditTool Command: {command}  successfully replaced text in file{str(_path)} !")
+                self.display.add_message("user", f"Start of Old Text: {old_str[:100]}")
+                self.display.add_message("user", f"Start of New Text: {new_str[:100]}")
                 output_data = {
                     "command": "str_replace",
                     "status": "success",
@@ -168,12 +174,12 @@ class EditTool(BaseAnthropicTool):
                 )
 
             if self.display:
-                self.display.add_message("tool", f"EditTool completed {command}")
+                self.display.add_message("user", f"EditTool completed {command}")
             return ToolResult(output=self.format_output(output_data))
 
         except Exception as e:
             if self.display:
-                self.display.add_message("tool", f"EditTool error: {str(e)}")
+                self.display.add_message("user", f"EditTool error: {str(e)}")
             error_data = {
                 "command": command,
                 "status": "error",

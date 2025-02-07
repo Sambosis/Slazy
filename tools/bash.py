@@ -236,7 +236,7 @@ class BashTool(BaseAnthropicTool):
         output = ""
         try:
             if self.display:
-                self.display.add_message("tool", f"Processing command: {command}")
+                self.display.add_message("user", f"Processing command: {command}")
                 await asyncio.sleep(0.2)
 
             prompt = read_prompt_from_file(BASH_PROMPT_FILE, command)

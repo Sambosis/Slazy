@@ -16,6 +16,11 @@ from config import get_constant, set_constant, PROJECT_DIR, LOGS_DIR
 from openai import OpenAI
 from utils.file_logger import log_file_operation, get_all_current_code
 import time
+from pygments import highlight
+from pygments.lexers import PythonLexer
+from pygments.formatters import HtmlFormatter
+from pygments.styles import get_style_by_name
+from utils.build123d import BUILD123D_INTRO
 from dotenv import load_dotenv
 load_dotenv()
 ic.configureOutput(includeContext=True, outputFunction=write_to_file)
@@ -125,7 +130,7 @@ class WriteCodeTool(BaseAnthropicTool):
         ic()
         try:
             if self.display is not None:
-                self.display.add_message("tool", f"WriteCodeTool Instructions: {code_description}")
+                self.display.add_message("user", f"WriteCodeTool Instructions: {code_description}")
                 await asyncio.sleep(0.2)
 
             # Convert path string to Path object
@@ -147,14 +152,14 @@ class WriteCodeTool(BaseAnthropicTool):
             formatted_output = self.format_output(result_data)
             ic(f"formatted_output: {formatted_output}")
             if self.display is not None:
-                self.display.add_message("tool", f"WriteCodeTool completed: {formatted_output}")
+                self.display.add_message("user", f"WriteCodeTool completed: {formatted_output}")
                 await asyncio.sleep(0.2)
             return ToolResult(output=formatted_output)
 
         except Exception as e:
             await asyncio.sleep(0.2)
             if self.display is not None:
-                self.display.add_message("tool", f"WriteCodeTool error: {str(e)}")
+                self.display.add_message("user", f"WriteCodeTool error: {str(e)}")
             await asyncio.sleep(0.2)
             error_msg = f"Failed to execute {command}: {str(e)}"
             
@@ -218,6 +223,7 @@ class WriteCodeTool(BaseAnthropicTool):
                 "type": "text",
                 "text": f"""At the bottom is a detailed description of code that you need to write. Flollow up by an expert review that gives some valuable suggestions. 
                 Make sure you provide your response in the requested programming lanaguage. Your response should include everything needed in order to run the file including imports that will be needed.
+
                 All of the code that you provide needs to be enclosed in a single markdown style code block with the language specified.
                 Here is an example of what your response should look like:
                 ```python
@@ -243,7 +249,8 @@ class WriteCodeTool(BaseAnthropicTool):
         try:
             completion = client.chat.completions.create(
             # model="deepseek/deepseek-r1:nitro",
-            model="anthropic/claude-3.5-haiku-20241022",
+            max_tokens=8000,
+            model="google/gemini-2.0-flash-001",
             messages=messages)
         except Exception as e:
             ic(f"error: {e}")
@@ -261,7 +268,7 @@ class WriteCodeTool(BaseAnthropicTool):
             error_msg = f"Failed to parse code block: {str(parse_error)}"
             if self.display is not None:
                 try:
-                    self.display.add_message("tool", error_msg)
+                    self.display.add_message("user", error_msg)
                 except Exception as display_error:
                     return ToolResult(error=f"{error_msg}\nFailed to display error: {str(display_error)}")
 
@@ -283,7 +290,25 @@ class WriteCodeTool(BaseAnthropicTool):
                     self.display.add_message("warning", f"Failed to log code: {str(file_error)}")
                 except Exception:
                     pass
-        
+
+
+
+        # Highlight the code
+        #  Create a Python lexer
+        lexer = PythonLexer()
+
+        # Create an HTML formatter with full=False
+        formatter = HtmlFormatter(style="monokai", full=False, linenos=True)
+        code_temp=f"#{str(file_path)}\n{code_string}"
+        # Highlight the code
+        code_display = highlight(code_temp, lexer, formatter)
+
+        # Get CSS styles
+        css_styles = formatter.get_style_defs(".highlight")
+
+        # Return BOTH the highlighted code and the CSS
+        self.display.add_message("tool", {"code": code_display, "css": css_styles})
+
         return code_string
 
   
@@ -339,7 +364,7 @@ class WriteCodeTool(BaseAnthropicTool):
         try:
             completion = client2.chat.completions.create(
             # model="perplexity/sonar-reasoning",
-            model="anthropic/claude-3.5-haiku-20241022",
+            model="google/gemini-2.0-flash-001",
             messages=messages)
         except Exception as e:
             ic(f"error: {e}")
@@ -373,10 +398,10 @@ class WriteCodeTool(BaseAnthropicTool):
         if 'filename' in data:
             output_lines.append(f"Filename: {data['filename']}")
 
-        # Add code string if present
-        if 'code_string' in data:
-            output_lines.append("Code:")
-            output_lines.append(data['code_string'])
+        # # Add code string if present
+        # if 'code_string' in data:
+        #     output_lines.append("Code:")
+        #     output_lines.append(data['code_string'])
         
         # Add packages if present
         if 'packages_installed' in data:

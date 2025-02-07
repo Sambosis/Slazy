@@ -41,7 +41,7 @@ from tools import (
 from tools import (
     ToolCollection,
     ToolResult
-    )
+)
 # Assume AgentDisplay is defined in the same file or imported
 from rich.live import Live
 from rich.layout import Layout
@@ -53,10 +53,9 @@ from rich.table import Table
 from queue import Queue
 from utils.agent_display import AgentDisplay
 from utils.output_manager import OutputManager
+import argparse
 load_dotenv()
 install()
-
-
 
 with open(SYSTEM_PROMPT_FILE, 'r', encoding="utf-8") as f:
     SYSTEM_PROMPT = f.read()
@@ -64,11 +63,9 @@ with open(SYSTEM_PROMPT_FILE, 'r', encoding="utf-8") as f:
 filename = ""
 ic.configureOutput(includeContext=True, outputFunction=write_to_file)
 
-
 def archive_file(file_path):
     """Archive a file by appending moving it to an archive folder with a timestamp."""
     try:
-
         # Get the filename and extension
         file_path = Path(file_path)
         filename = file_path.stem
@@ -79,12 +76,12 @@ def archive_file(file_path):
         # Create the new path with timestamp
         timestamp = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
         new_path = Path(archive_dir, f"{filename}_{timestamp}{extension}")
-        # input(f"Press Enter to create new path {new_path}...")
         # Move the file to the archive directory
         file_path.rename(new_path)
         return new_path
     except Exception as e:
         return f"Error archiving file: {str(e)}"
+
 archive_file(ICECREAM_OUTPUT_FILE)
 archive_file(LOG_FILE)
 archive_file(MESSAGES_FILE)
@@ -93,24 +90,87 @@ archive_file(USER_LOG_FILE)
 archive_file(ASSISTANT_LOG_FILE)
 archive_file(TOOL_LOG_FILE)
 
+# ──────────────────────────────────────────────────────────────────────────────
+# Context Reduction Functions
+# ──────────────────────────────────────────────────────────────────────────────
+
+def filter_messages(messages: List[Dict]) -> List[Dict]:
+    """
+    Keep only messages with role 'user' or 'assistant'.
+    Also keep any tool_result messages that contain errors.
+    """
+    keep_roles = {"user", "assistant"}
+    filtered = []
+    for msg in messages:
+        if msg.get("role") in keep_roles:
+            filtered.append(msg)
+        elif isinstance(msg.get("content"), list):
+            for block in msg["content"]:
+                if isinstance(block, dict) and block.get("type") == "tool_result":
+                    # Check if any text in the tool result indicates an error
+                    text = ""
+                    for item in block.get("content", []):
+                        if isinstance(item, dict) and item.get("type") == "text":
+                            text += item.get("text", "")
+                    if "error" in text.lower():
+                        filtered.append(msg)
+                        break
+    return filtered
+
+async def summarize_history(messages: List[Dict], display: AgentDisplay) -> str:
+    """
+    Summarize the given list of messages.
+    Here we reuse the existing summarize_recent_messages function.
+    """
+    summary = await summarize_recent_messages(messages, display)
+    return summary
+
+def aggregate_file_states() -> str:
+    """
+    Aggregate file states. Here we reuse extract_files_content.
+    """
+    return extract_files_content()
+
+async def refresh_context_async(task: str, messages: List[Dict], display: AgentDisplay) -> str:
+    """
+    Create a combined context string by filtering and (if needed) summarizing messages
+    and appending current file contents.
+    """
+    filtered = filter_messages(messages)
+    # If many messages remain, summarize the older ones (all except the last 10)
+    if len(filtered) > 10:
+        old_messages = filtered[:-10]
+        summary = get_all_summaries()
+
+        # summary = await summarize_history(old_messages, display)
+    else:
+        summary = get_all_summaries()
+    file_contents = aggregate_file_states()
+    combined_content = f"""Original request: {task}
+    Context and History Summary:
+    {summary}
+
+    Current Project Files:
+    {file_contents}
+    """
+    return combined_content
+
+# ──────────────────────────────────────────────────────────────────────────────
+# Existing refresh_context (for backward compatibility; now unused)
 def refresh_context(task):
-    """Combines first message with summaries and file contents into a properly formatted message list"""
-    first_message = task
+    """(Legacy) Combines first message with summaries and file contents."""
     combined_summaries = get_all_summaries()
     file_contents = extract_files_content()
-    
-    # Create a properly formatted combined message
     combined_content = f"""Original request: {task}
-    Context and History:
-    {combined_summaries}
-    Current Project Files:
-    {file_contents}"""
-        
+Context and History:
+{combined_summaries}
+Current Project Files:
+{file_contents}"""
+    return combined_content
 
-    
-    return combined_content  # Return a list with the single combined message
+# ──────────────────────────────────────────────────────────────────────────────
+# Interrupt Manager with integrated context refresh
 import signal
-import asyncio
 
 class InterruptManager:
     def __init__(self, display, messages, task):
@@ -161,7 +221,6 @@ class InterruptManager:
                 
         return False
 
-
     def create_mock_tool_response(self, tool_use_block):
         """Create a mock tool response for interrupted tool calls"""
         return {
@@ -175,34 +234,60 @@ class InterruptManager:
         }
 
     def check_and_handle_tool_chains(self):
+        """
+        For each assistant message that contains tool_use blocks, ensure that the
+        immediately following message is a tool_result message. Insert a mock tool_result
+        message if it’s missing. Only process messages from the assistant.
+        """
         if not self.messages:
             return False
-            
+
         changes_made = False
-        i = len(self.messages) - 1
-        
-        while i >= 0:
-            current_msg = self.messages[i]
-            
-            if isinstance(current_msg.get('content', []), list):
-                content = current_msg['content']
+        # Loop over indices of messages
+        i = 0
+        while i < len(self.messages):
+            msg = self.messages[i]
+            # Only consider assistant messages
+            if msg.get("role") == "assistant" and isinstance(msg.get("content"), list):
+                # Find tool_use blocks in this message
                 tool_uses = [
-                    block for block in content 
-                    if isinstance(block, dict) and block.get('type') == 'tool_use'
+                    block for block in msg["content"]
+                    if isinstance(block, dict) and block.get("type") == "tool_use"
                 ]
-                
                 if tool_uses:
-                    # Create mock responses for each tool use
-                    mock_responses = [self.create_mock_tool_response(tool_use) for tool_use in tool_uses]
-                    self.messages.insert(i + 1, {
-                        "role": "user",
-                        "content": mock_responses
-                    })
-                    changes_made = True
-                    
-            i -= 1
-            
+                    # Check if the next message exists and is a tool_result message.
+                    next_index = i + 1
+                    if next_index < len(self.messages):
+                        next_msg = self.messages[next_index]
+                        # Only insert if the next message does not have any tool_result blocks.
+                        if not (isinstance(next_msg.get("content"), list) and 
+                                any(isinstance(block, dict) and block.get("type") == "tool_result"
+                                    for block in next_msg.get("content"))):
+                            mock_responses = [
+                                self.create_mock_tool_response(tool_use)
+                                for tool_use in tool_uses
+                            ]
+                            self.messages.insert(next_index, {
+                                "role": "assistant",
+                                "content": mock_responses
+                            })
+                            changes_made = True
+                            # Skip over the newly inserted message.
+                            i += 1
+                    else:
+                        # No next message, so simply append one.
+                        mock_responses = [
+                            self.create_mock_tool_response(tool_use)
+                            for tool_use in tool_uses
+                        ]
+                        self.messages.append({
+                            "role": "assistant",
+                            "content": mock_responses
+                        })
+                        changes_made = True
+            i += 1
         return changes_made
+
 
     def _sync_handler(self, signum, frame):
         """Synchronous signal handler that schedules the async handler"""
@@ -217,32 +302,34 @@ class InterruptManager:
         if self._old_signal_handler is not None:
             signal.signal(signal.SIGINT, self._old_signal_handler)
 
-    def handle_interrupt(self):
+    async def handle_interrupt(self):
         """Asynchronous interrupt handler"""
         try:
             self.display.live.stop()
-            # cleaned = self.check_and_handle_tool_chains()
-            
             while True:
+                rr(self.messages)
                 print("\nInterrupt Menu:")
                 print("1. Send message to LLM")
                 print("2. Refresh Context")
                 print("3. Exit")
-                
+                ic(self.messages)
                 choice = Prompt.ask("Select option", choices=["1", "2", "3"])
                 if choice == "1":
+                    # Ensure any pending tool_use blocks are matched with tool_result blocks
+                    self.check_and_handle_tool_chains()
                     new_message = Prompt.ask("Enter your message")
-                    
                     self.messages.append({"role": "user", "content": new_message})
+                    ic(self.messages)
                     self.display.live.start()
                     return
+
                     
                 elif choice == "2":
-                    new_context = refresh_context(self.task)
+                    # Use the new context reduction functions
+                    new_context = await refresh_context_async(self.task, self.messages, self.display)
                     self.messages.clear()
                     self.messages.append({"role": "user", "content": new_context})
                     new_message = Prompt.ask("Enter your message")
-                    
                     self.messages.append({"role": "user", "content": new_message})
                     self.display.live.start()
                     return
@@ -256,7 +343,7 @@ class InterruptManager:
             print(f"Error in interrupt handler: {e}")
             self.display.live.start()
 
-
+# ──────────────────────────────────────────────────────────────────────────────
 def _make_api_tool_result(result: ToolResult, tool_use_id: str) -> Dict:
     """Create a tool result dictionary with proper error handling."""
     tool_result_content = []
@@ -299,35 +386,23 @@ def _make_api_tool_result(result: ToolResult, tool_use_id: str) -> Dict:
 def format_messages_to_string(messages):
     """
     Format a list of messages into a formatted string.
-
-    Args:
-        messages (list): List of message dictionaries containing 'role' and 'content'
-
-    Returns:
-        str: Formatted string containing all messages
     """
     try:
-        # Use list to build string pieces efficiently
         output_pieces = []
-
         for msg in messages:
             output_pieces.append(f"\n{msg['role'].upper()}:")
-
-            # Handle content based on its type
             if isinstance(msg["content"], list):
                 for content_block in msg["content"]:
                     if isinstance(content_block, dict):
                         if content_block.get("type") == "tool_result":
                             output_pieces.append(
-                                f"\nTool Result [ID: {content_block.get('name', 'unknown')}]:"
+                                f"\nTool Result [ID: {content_block.get('name', 'unknown')}]:"  
                             )
                             for item in content_block.get("content", []):
                                 if item.get("type") == "text":
                                     output_pieces.append(f"\nText: {item.get('text')}")
                                 elif item.get("type") == "image":
-                                    output_pieces.append(
-                                        "\nImage Source: base64 source too big"
-                                    )
+                                    output_pieces.append("\nImage Source: base64 source too big")
                         else:
                             for key, value in content_block.items():
                                 output_pieces.append(f"\n{key}: {value}")
@@ -335,13 +410,8 @@ def format_messages_to_string(messages):
                         output_pieces.append(f"\n{content_block}")
             else:
                 output_pieces.append(f"\n{msg['content']}")
-
-            # Add a separator between messages for better readability
             output_pieces.append("\n" + "-" * 80)
-
-        # Join all pieces with empty string since we've already added newlines
         return "".join(output_pieces)
-
     except Exception as e:
         return f"Error during formatting: {str(e)}"
 
@@ -369,8 +439,6 @@ class TokenTracker:
         self.total_output += self.recent_output
 
     def display(self, displayA: AgentDisplay):
-        """Display token usage with Rich formatting."""
-        # Format recent token usage
         recent_usage = [
             "Recent Token Usage 📊",
             f"Recent Cache Creation: {self.recent_cache_creation:,}",
@@ -379,33 +447,19 @@ class TokenTracker:
             f"Recent Output: {self.recent_output:,}",
             f"Recent Total: {self.recent_cache_creation + self.recent_cache_retrieval + self.recent_input + self.recent_output:,}",
         ]
-        # calculate the total cost of total tokens at this cost Input: $3 / MTok, Output: $15 / MTok, Cache Write: $3.75 / MTok, Cache Read: $0.30 / MTok.  
-        # where / MTok = 1,000,000 tokens for each token type.add()
         total_cost = (self.total_cache_creation * 3.75 + self.total_cache_retrieval * 0.30 + self.total_input * 3 + self.total_output * 15) / 1_000_000
-        
-
-
-        
-        # Format total token usage
         total_usage = [
             "Total Token Usage 📈",
             f"Total Cache Creation: {self.total_cache_creation:,}",
             f"Total Cache Retrieval: {self.total_cache_retrieval:,}",
-            # f"Total Input: {self.total_input:,}",
             f"Total Output: {self.total_output:,}",
             f"Total Tokens: {self.total_cache_creation + self.total_cache_retrieval + self.total_input + self.total_output:,} with a total cost of ${total_cost:.2f} USD.",
         ]
-
-        # Combine the sections with proper spacing
-        # token_display = "\n".join(recent_usage) + "\n\n" + "\n".join(total_usage)
         token_display = f"\n{total_usage}"
-        
-        # Send to display using system message type
         self.displayA.add_message("user", token_display)
 
 with open(JOURNAL_SYSTEM_PROMPT_FILE, 'r', encoding="utf-8") as f:
     JOURNAL_SYSTEM_PROMPT = f.read()
-
 
 def _extract_text_from_content(content: Any) -> str:
     if isinstance(content, str):
@@ -413,13 +467,13 @@ def _extract_text_from_content(content: Any) -> str:
     elif isinstance(content, list):
         text_parts = []
         for item in content:
-          if isinstance(item, dict):
-              if item.get("type") == "text":
-                  text_parts.append(item.get("text", ""))
-              elif item.get("type") == "tool_result":
-                  for sub_item in item.get("content", []):
-                      if sub_item.get("type") == "text":
-                          text_parts.append(sub_item.get("text", ""))
+            if isinstance(item, dict):
+                if item.get("type") == "text":
+                    text_parts.append(item.get("text", ""))
+                elif item.get("type") == "tool_result":
+                    for sub_item in item.get("content", []):
+                        if sub_item.get("type") == "text":
+                            text_parts.append(sub_item.get("text", ""))
         return " ".join(text_parts)
     return ""
 
@@ -441,7 +495,7 @@ def truncate_message_content(content: Any, max_length: int = 300000) -> Any:
                 for k, v in content.items()}
     return content
 
-# Add this near the top of the file with other global variables
+# Global for quick summaries
 QUICK_SUMMARIES = []
 
 def add_summary(summary: str) -> None:
@@ -455,15 +509,11 @@ def get_all_summaries() -> str:
     
     combined = "Here's everything I've done:\n"
     for entry in QUICK_SUMMARIES:
-        # Format timestamp for readability
         combined += f"\n{entry}"
-        
     return combined
 
 async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key: str, max_tokens: int = 8000, display: AgentDisplay) -> List[BetaMessageParam]:
     """Main loop for agentic sampling."""
-    # ic(messages)
-    # Initialize interrupt manager with required objects
     task = messages[0]['content']
     interrupt_manager = InterruptManager(display, messages, task)
     interrupt_manager.install_handler()
@@ -477,14 +527,10 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
             ProjectSetupTool(display=display),
             WriteCodeTool(display=display),
             PictureGenerationTool(display=display),
-            display=display  # Pass display to ToolCollection
+            display=display
         )
-        # ic(tool_collection)
-        # store the task which is the contents of the first message
-        # clear the file log file
         with open(LOG_FILE, 'w', encoding='utf-8') as f:
             f.write("")
-        
 
         display.add_message("system", tool_collection.get_tool_names_as_string())
         await asyncio.sleep(0.1) 
@@ -500,17 +546,15 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
         image_truncation_threshold = 1
         only_n_most_recent_images = 2
         while running:
-            i+=1
+            i += 1
             if enable_prompt_caching:
                 _inject_prompt_caching(messages)
                 image_truncation_threshold = 1
-                system=[
-                            {
-                                "type": "text",
-                                "text": SYSTEM_PROMPT,
-                                "cache_control": {"type": "ephemeral"}
-                            },
-                        ]
+                system = [{
+                    "type": "text",
+                    "text": SYSTEM_PROMPT,
+                    "cache_control": {"type": "ephemeral"}
+                }]
 
             if only_n_most_recent_images:
                 _maybe_filter_to_n_most_recent_images(
@@ -522,22 +566,11 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
             try:
                 tool_collection.to_params()
 
-                # ic(messages)
-
                 truncated_messages = [
                     {"role": msg["role"], "content": truncate_message_content(msg["content"])}
                     for msg in messages
                 ]
-                # display.live.stop()  # Stop the live display
-                # # Ask user if they are done reviewing the info using rich's Confirm.ask
-                # while Confirm.ask("Do you need more time?", default=True):
-                #     ci=0
-                #     for message in messages:
-                #         rr(f"Message # {ci}")
-                #         ci+=1
-                #         rr(message)
-                # display.live.start()  # Restart the live display
-                
+
                 messages_to_display = messages[-1:] if len(messages) > 1 else messages[-1:]
                 for message in messages_to_display:
                     if isinstance(message, dict):
@@ -545,20 +578,16 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                             display_output = message.get("text", "")
                             display.add_message("user", "type text")
                             await asyncio.sleep(0.1) 
-
                         elif message.get("type") == "image":
                             display_output = "Image"
                         elif message.get("type") == "tool_result":
                             display_output = message["content"][0].get("text", "")
                             display.add_message("user", "type tool result")
-                        elif message.get("type") == "tool_result_image":
-                            display_output = "Image"
                         elif message.get("type") == "tool_use":
                             display_output = f"Calling tool: {message.get('name', '')}"
                             display_output += f"Input: {json.dumps(message.get('input', {}))}"
                             display.add_message("user", "tool use")
                         else:
-                            # display.add_message("user", "First Else")
                             if len(messages) == 1:
                                 display_output = message['content']
                             else:
@@ -571,19 +600,17 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                                         display_output = message
                     elif isinstance(message, str):
                         display.add_message("user", "first elif")
-
                         display_output = message
                     else:
                         display_output = str(message)
                         display.add_message("user", "second Else")
-
                     
                     display.add_message("user", display_output)
-                    await asyncio.sleep(0.1) 
+                    await asyncio.sleep(0.1)
                 quick_summary = await summarize_recent_messages(messages[-4:], display)
-                add_summary(quick_summary)  # Store the summary
+                add_summary(quick_summary)
                 display.add_message("assistant", f"Here is a quick summary of what I did:\n {quick_summary}")
-                await asyncio.sleep(0.1) 
+                await asyncio.sleep(0.1)
                 response = client.beta.messages.create(
                     max_tokens=MAX_SUMMARY_TOKENS,
                     messages=truncated_messages,
@@ -595,17 +622,11 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                 if len(messages) < 2:
                     display.clear_messages("all")
 
-                # display.add_message("assistant", response.content[0].text) # Update display
-                
-
-
-
                 response_params = []
                 for block in response.content:
                     if hasattr(block, 'text'):
-                        # output_manager.format_api_response(response)
                         response_params.append({"type": "text", "text": block.text})
-                        display.add_message("assistant", block.text) # Update display
+                        display.add_message("assistant", block.text)
                     elif getattr(block, 'type', None) == "tool_use":
                         response_params.append({
                             "type": "tool_use",
@@ -614,17 +635,13 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                             "input": block.input
                         })
                 messages.append({"role": "assistant", "content": response_params})
-                # write the messags to a file 
                 with open(MESSAGES_FILE, 'w', encoding='utf-8') as f:
                     message_string = format_messages_to_string(messages)
                     f.write(message_string)
                     
-
-
-                    
-                if len(messages) > 42:
+                if len(messages) > 12:
                     last_3_messages = messages[-3:]
-                    new_context = refresh_context(task)
+                    new_context = await refresh_context_async(task, messages, display)
                     messages = [{"role": "user", "content": new_context}]
                     messages.extend(last_3_messages)
                 tool_result_content: List[BetaToolResultBlockParam] = []
@@ -632,10 +649,7 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                     output_manager.format_content_block(content_block)
                     if content_block["type"] == "tool_use":
                         display.add_message("user", f"Calling tool: {content_block['name']}")
-                       
-                        # Initialize result outside try block
                         result = ToolResult(output="Tool execution not started")
-                        
                         try:
                             ic(content_block['name'])
                             ic(content_block["input"])
@@ -643,55 +657,37 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                                 name=content_block["name"],
                                 tool_input=content_block["input"],
                             )
-                            # Ensure we have a valid result
                             if result is None:
                                 result = ToolResult(output="Tool execution failed with no result")
-                            
                         except Exception as e:
                             result = ToolResult(output=f"Tool execution failed: {str(e)}")
-                        
                         finally:
                             tool_result = _make_api_tool_result(result, content_block["id"])
                             ic(tool_result)
                             tool_result_content.append(tool_result)
-                            # display.live.start()
-
                             tool_output = result.output if hasattr(result, 'output') else str(result)
-                            
-                            # Create a combined content list with both text and tool result
                             combined_content = [{
                                 "type": "tool_result",
                                 "content": tool_result["content"],
                                 "tool_use_id": tool_result["tool_use_id"],
                                 "is_error": tool_result["is_error"]
                             }]
-                            
-                            # Add descriptive text about the tool usage
                             combined_content.append({
                                 "type": "text",
                                 "text": f"Tool '{content_block['name']}' was called with input: {json.dumps(content_block['input'])}.\nResult: {_extract_text_from_content(tool_output)}"
                             })
-                            
-                            # Add a single message with the combined content
                             messages.append({
                                 "role": "user",
                                 "content": combined_content
                             })
-                            # clear the screen
                             display.clear_messages("tool")
                             display.live.stop()
                             await asyncio.sleep(0.2)
                             display.live.start()
-                            # Update the display
-                            # display.add_message("assistant", f"asisstant '{content_block['name']}' was called with input: {json.dumps(content_block['input'])}.\nResult: {_extract_text_from_content(tool_output)}")
                             await asyncio.sleep(0.2)
                 if not tool_result_content:
-
-                    display.live.stop()  # Stop the live display
-                    # add a small delay
+                    display.live.stop()
                     await asyncio.sleep(0.2)
-                    # keep aski
-                    # ng until you get a non-empty response
                     while True:
                         rr("\nAwaiting User Input ⌨️")
                         task = Prompt.ask("What would you like to do next? Enter 'no' to exit")
@@ -700,29 +696,12 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                             break
                         if task:
                             break
-                    display.live.start()  # Restart the live display
+                    display.live.start()
                     messages.append({"role": "user", "content": task})
-                    # display.clear_messages("user")
                     await asyncio.sleep(0.1)
                 messages_to_display = messages[-2:] if len(messages) > 1 else messages[-1:]
-                # for message in messages_to_display:
-                #     display.add_message("user", message["content"][0]) # Update display
-
-                # display.add_message("user",f"There are {len(messages)} messages")
-
-                # display.live.stop()  # Stop the live display
-                # # Ask user if they are done reviewing the info using rich's Confirm.ask
-                # while Confirm.ask("Do you need more time?", default=True):
-                #     ci=0
-                #     for message in messages:
-                #         rr(f"Message # {ci}")
-                #         ci+=1
-                #         rr(message)
-                # display.live.start()  # Restart the live display
                 token_tracker.update(response)
                 token_tracker.display(display)
-
-
 
             except UnicodeEncodeError as ue:
                 ic(f"UnicodeEncodeError: {ue}")
@@ -733,7 +712,7 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                 ic(f"Error in sampling loop: {str(e).encode('ascii', errors='replace').decode('ascii')}")
                 ic(f"The error occurred at the following message: {messages[-1]} and line: {e.__traceback__.tb_lineno}")
                 ic(e.__traceback__.tb_frame.f_locals)
-                display.add_message("user", ("Error", str(e))) # Update display with error
+                display.add_message("user", ("Error", str(e)))
                 raise
         return messages
 
@@ -742,7 +721,7 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
         ic(e.__traceback__.tb_lasti)
         ic(e.__traceback__.tb_frame.f_code.co_filename)
         ic(e.__traceback__.tb_frame)
-        display.add_message("user", ("Initialization Error", str(e))) # Update display with initialization error
+        display.add_message("user", ("Initialization Error", str(e)))
         ic(f"Error initializing sampling loop: {str(e)}")
         raise
 
@@ -763,7 +742,7 @@ def _maybe_filter_to_n_most_recent_images(
     messages: List[BetaMessageParam],
     images_to_keep: int,
     min_removal_threshold: int
-    ):
+):
     if images_to_keep is None:
         return messages
 
@@ -802,9 +781,7 @@ def _maybe_filter_to_n_most_recent_images(
             tool_result["content"] = new_content
 
 async def summarize_recent_messages(messages: List[BetaMessageParam], display: AgentDisplay) -> str:
-
     sum_client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
-
     conversation_text = ""
     for msg in messages:
         role = msg['role'].upper()
@@ -819,29 +796,11 @@ async def summarize_recent_messages(messages: List[BetaMessageParam], display: A
                                 conversation_text += f"\n{role} (Tool Result): {item.get('text', '')}"
         else:
             conversation_text += f"\n{role}: {msg['content']}"
-
-
     summary_prompt = f"""Please provide a concise casual natural language summary of the messages. 
-    They are the actual LLM messages log of interaction and you will provide between 3 and 5 conversational style sentences imforming someone what was done. 
-    Focusing on the actions taken and providing the names of and file, functions or other items that were specifically acted on and
-    a basic idea of what action was taken and why. At the end of this you should propose a question to yourself about what could possible go wrong or could already be wrong in your code so far.
-    The question might even be asking yourself if you are staying on track for the end goal, what error's are common in your next step or how the different parts of the program will interact with each other. 
-    The question itself will very based the circumstance, use your best judgement to create a self critical question.  Then give a very brief 1 sentence response to your own question.  just a brief response to the question you asked yourself. We are going to call whole thing your SUMMARY_RESPONSE. Your SUMMARY_RESPONSE should be enclosed in XML style tags such as like this <SUMMARY_RESPONSE> and </SUMMARY_RESPONSE>
-    Your SUMMARY_RESPONSE should  be phased speaking in the first person like you are informing someone as to what you are doing. You could say somthing like this:
-    Ok, I will now give you the summary of the conversation.
-    <SUMMARY_RESPONSE>
-    I have just created a new file called foo.py in the foo/bar directory. 
-    I have also updated the great_code.py file with the following changes:
-    Added error handling to the function foo() to handle the case when the user enters an invalid input and added a new function called bar() that takes a string as input and returns the string in reverse order.
-    But wait, do i need to add function calls to bar() anywhere in foo.py? No, they were already there, I just need to make sure I added all the necessary imports.
-    </SUMMARY_RESPONSE>
-    The detail of your summary should vary based on the work has been done however always:
-    Include:
-    1. All file names, functions, directories and paths mentioned
-    2. Directory structures created or modified
-    3. Specific actions taken and their outcomes
-    4. Any technical decisions or solutions implemented
-
+    They are the actual LLM messages log of interaction and you will provide between 3 and 5 conversational style sentences informing someone what was done. 
+    Focus on the actions taken and provide the names of any files, functions, directories, or paths mentioned and a basic idea of what was done and why. 
+    At the end, propose a self-critical question about what could possibly go wrong or what might already be wrong in the code so far, and answer it briefly.
+    Enclose your summary,self-critical question and answer in XML-style tags, for example: <SUMMARY_RESPONSE> ....  </SUMMARY_RESPONSE>
     Messages to summarize:
     {conversation_text}"""
     response = sum_client.messages.create(
@@ -853,28 +812,20 @@ async def summarize_recent_messages(messages: List[BetaMessageParam], display: A
         }]
     )
     summary = response.content[0].text
-    # filter out everything from the summary that is not enclosed in the XML style tags
     start_tag = "<SUMMARY_RESPONSE>"
     end_tag = "</SUMMARY_RESPONSE>"
     if start_tag in summary and end_tag in summary:
         summary = summary[summary.find(start_tag)+len(start_tag):summary.find(end_tag)]
-
-
-
-
     return summary
 
 async def run_sampling_loop(task: str, display: AgentDisplay) -> List[BetaMessageParam]:
     """Run the sampling loop with clean output handling."""
     api_key = os.getenv("ANTHROPIC_API_KEY")
     messages = []
-    # ic(messages)
     if not api_key:
         raise ValueError("API key not found. Please set the ANTHROPIC_API_KEY environment variable.")
-    messages.append({"role": "user","content": task})
-    display.add_message("user", task)
- 
-
+    messages.append({"role": "user", "content": task})
+    # display.add_message("user", task)
     messages = await sampling_loop(
         model=MAIN_MODEL,  # Use MAIN_MODEL from config.py
         messages=messages,
@@ -883,66 +834,63 @@ async def run_sampling_loop(task: str, display: AgentDisplay) -> List[BetaMessag
     )
     return messages
 
-
 async def main_async():
     """Async main function with proper error handling."""
-    prompts_dir =PROMPTS_DIR
-    prompt_files = list(prompts_dir.glob("*.md"))
-    rr("\nAvailablePrompts:")
-    for i, file in enumerate(prompt_files, 1):
-        rr(f"{i}. {file.name}")
-    rr(f"{len(prompt_files) + 1}. Create new prompt")
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--newp', action='store_true', help='Skip prompt selection and create new prompt directly')
+    args = parser.parse_args()
 
-    choice = Prompt.ask(
-        "Select prompt number",
-        choices=[str(i) for i in range(1, len(prompt_files) + 2)]
-    )
-
-    if int(choice) == len(prompt_files) + 1:
+    if args.newp:
         filename = Prompt.ask("Enter new prompt filename (without .md)")
-        new_prompt_path = prompts_dir / f"{filename}.md"
-    else:
-        prompt_path = prompt_files[int(choice) - 1]
-        new_prompt_path = prompt_path
-        filename = prompt_path.stem
-
-
-    if int(choice) == len(prompt_files) + 1:
         prompt_text = Prompt.ask("Enter your prompt")
-        new_prompt_path = prompts_dir / f"{filename}.md"
+        new_prompt_path = PROMPTS_DIR / f"{filename}.md"
         with open(new_prompt_path, 'w', encoding='utf-8') as f:
             f.write(prompt_text)
         task = prompt_text
     else:
-        with open(prompt_path, 'r', encoding='utf-8') as f:
-            task = f.read()
+        prompts_dir = PROMPTS_DIR
+        prompt_files = list(prompts_dir.glob("*.md"))
+        rr("\nAvailable Prompts:")
+        for i, file in enumerate(prompt_files, 1):
+            rr(f"{i}. {file.name}")
+        rr(f"{len(prompt_files) + 1}. Create new prompt")
+
+        choice = Prompt.ask(
+            "Select prompt number",
+            choices=[str(i) for i in range(1, len(prompt_files) + 2)]
+        )
+
+        if int(choice) == len(prompt_files) + 1:
+            filename = Prompt.ask("Enter new prompt filename (without .md)")
+            prompt_text = Prompt.ask("Enter your prompt")
+            new_prompt_path = PROMPTS_DIR / f"{filename}.md"
+            with open(new_prompt_path, 'w', encoding='utf-8') as f:
+                f.write(prompt_text)
+            task = prompt_text
+        else:
+            prompt_path = prompt_files[int(choice) - 1]
+            filename = prompt_path.stem
+            with open(prompt_path, 'r', encoding='utf-8') as f:
+                task = f.read()
+
     project_dir = set_project_dir(filename)
     set_constant("PROJECT_DIR", str(project_dir))
     task += f"Your project directory is {project_dir}. You need to make sure that all files you create and work you do is done in that directory. \n"
-    # Create the display instance and setup the layout
-    display = AgentDisplay()  # Create instance of AgentDisplay
-    layout = display.create_layout()  # Create initial layout
+    display = AgentDisplay()
+    layout = display.create_layout()
 
     try:
-        # Create console for Live display
         console = Console()
-        
-        # Start Live display with the layout
         with Live(display.create_layout(), refresh_per_second=4, auto_refresh=True) as live:
-            display.live = live  # Set the live attribute
+            display.live = live
             update_task = asyncio.create_task(display.update_display(live))
-            await asyncio.sleep(0.1)  # Small delay to ensure display is ready
-            # Run the main sampling loop
+            await asyncio.sleep(0.1)
             messages = await run_sampling_loop(task, display)
-            
-            # Wait for any pending updates
             await update_task
-            
         rr("\nTask Completed Successfully")
-
     except Exception as e:
         rr(f"Error during execution: {e}")
-        raise  # Re-raise the exception for debugging
+        raise
 
 def main():
     """Main entry point with proper async handling."""
@@ -951,38 +899,22 @@ def main():
 def extract_files_content() -> str:
     """Extract contents of all files logged in file_creation_log.json and format them with headers."""
     try:
-        # Read the log file
         with open(LOG_FILE, 'r', encoding='utf-8') as f:
             logs = json.loads(f.read())
-        
-        # Initialize output string
         output = []
-        
-        # Process each file in the logs
         for filepath in logs.keys():
             try:
-                # Convert Windows path to Path object
                 path = Path(filepath)
-                
-                # Skip if file doesn't exist
                 if not path.exists():
                     continue
-                
-                # Read file content
                 content = path.read_text(encoding='utf-8')
-                
-                # Add file header and content to output
                 output.append(f"# filepath: {filepath}")
                 output.append(content)
-                output.append("\n" + "=" * 80 + "\n")  # Separator between files
-                
+                output.append("\n" + "=" * 80 + "\n")
             except Exception as e:
                 print(f"Error processing {filepath}: {str(e)}")
                 continue
-        
-        # Combine all content
         return "\n".join(output)
-        
     except Exception as e:
         return f"Error reading log file: {str(e)}"
 

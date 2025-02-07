@@ -281,7 +281,7 @@ class ProjectSetupTool(BaseAnthropicTool):
 
         try:
             if self.display:
-                self.display.add_message("tool", f"ProjectSetupTool executing command: {command} in {environment} environment")
+                self.display.add_message("user", f"ProjectSetupTool executing command: {command} in {environment} environment")
             
             # Convert project_path string to Path object (using constant if needed)
             project_path = Path(get_constant("PROJECT_DIR")) if get_constant("PROJECT_DIR") else Path(project_path)
@@ -319,11 +319,11 @@ class ProjectSetupTool(BaseAnthropicTool):
 
             formatted_output = self.format_output(result_data)
             if self.display:
-                self.display.add_message("tool", f"ProjectSetupTool completed: {formatted_output}")
+                self.display.add_message("user", f"ProjectSetupTool completed: {formatted_output}")
             return ToolResult(output=formatted_output)
 
         except Exception as e:
             if self.display:
-                self.display.add_message("tool", f"ProjectSetupTool error: {str(e)}")
+                self.display.add_message("user", f"ProjectSetupTool error: {str(e)}")
             error_msg = f"Failed to execute {command}: {str(e)}"
             return ToolResult(error=error_msg)

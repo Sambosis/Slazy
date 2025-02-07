@@ -1,3 +1,9 @@
 ❓ ❓ ❓ ❓ ❓ 
-Failed to log code: 'charmap' codec can't encode character '\u033d' in position 1379: character maps to <undefined>
+Failed to log code: 'charmap' codec can't encode character '\u03b8' in position 8713: character maps to <undefined>
+
+❓ ❓ ❓ ❓ ❓ 
+Failed to log code: 'charmap' codec can't encode character '\u2660' in position 188: character maps to <undefined>
+
+❓ ❓ ❓ ❓ ❓ 
+Failed to log code: 'charmap' codec can't encode characters in position 12933-12942: character maps to <undefined>
 
