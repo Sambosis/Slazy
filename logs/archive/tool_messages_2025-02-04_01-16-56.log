@@ -1,6 +1,0 @@
-📎 📎 📎 📎 📎 
-ProjectSetupTool executing command: setup_project in python environment
-
-📎 📎 📎 📎 📎 
-ProjectSetupTool error: Command 'uv add flask' returned non-zero exit status 3221225786.
-
