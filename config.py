@@ -13,10 +13,6 @@ TOP_LEVEL_DIR = Path.cwd()
 REPO_DIR = TOP_LEVEL_DIR / 'repo'  # Changed from TOP_LEVEL_DIR / 'repo'
 
 # Define other relevant paths based on PROJECT_DIR
-JOURNAL_DIR = TOP_LEVEL_DIR / 'journal'
-JOURNAL_FILE = JOURNAL_DIR / 'journal.log'
-JOURNAL_ARCHIVE_FILE = JOURNAL_DIR / 'journal_archive.log'
-JOURNAL_SYSTEM_PROMPT_FILE = JOURNAL_DIR / 'journal_system_prompt.md'
 SYSTEM_PROMPT_DIR = TOP_LEVEL_DIR / 'system_prompt'
 SYSTEM_PROMPT_FILE = SYSTEM_PROMPT_DIR / 'system_prompt.md'
 BASH_PROMPT_DIR = TOP_LEVEL_DIR / 'tools'
@@ -31,10 +27,7 @@ ICECREAM_OUTPUT_FILE =  LOGS_DIR / "debug_log.md"
 LOGS_DIR.mkdir(parents=True, exist_ok=True)
 LOG_FILE = LOGS_DIR / 'file_creation_log.json'
 MESSAGES_FILE = LOGS_DIR / 'messages.json'
-JOURNAL_MODEL = "claude-3-5-haiku-latest"
 SUMMARY_MODEL = "claude-3-5-haiku-latest"
-# JOURNAL_MODEL = "claude-3-5-sonnet-latest"
-# SUMMARY_MODEL = "claude-3-5-sonnet-latest"
 MAIN_MODEL = "claude-3-5-sonnet-latest"
 COMPUTER_USE_BETA_FLAG = "computer-use-2024-10-22"
 PROMPT_CACHING_BETA_FLAG = "prompt-caching-2024-07-31"
@@ -45,8 +38,6 @@ TOOL_LOG_FILE = LOGS_DIR / "tool_messages.log"
 
 
 
-
-JOURNAL_MAX_TOKENS = 1500
 MAX_SUMMARY_MESSAGES = 40
 MAX_SUMMARY_TOKENS = 8000
 
@@ -60,10 +51,6 @@ def write_constants_to_file():
     constants = {
         'TOP_LEVEL_DIR': str(TOP_LEVEL_DIR),
         'REPO_DIR': str(REPO_DIR),
-        'JOURNAL_DIR': str(JOURNAL_DIR),
-        'JOURNAL_FILE': str(JOURNAL_FILE),
-        'JOURNAL_ARCHIVE_FILE': str(JOURNAL_ARCHIVE_FILE),
-        'JOURNAL_SYSTEM_PROMPT_FILE': str(JOURNAL_SYSTEM_PROMPT_FILE),
         'SYSTEM_PROMPT_DIR': str(SYSTEM_PROMPT_DIR),
         'SYSTEM_PROMPT_FILE': str(SYSTEM_PROMPT_FILE),
         'BASH_PROMPT_DIR': str(BASH_PROMPT_DIR),
@@ -72,12 +59,10 @@ def write_constants_to_file():
         'TOOLS_DIR': str(TOOLS_DIR),
         'SCRIPTS_DIR': str(SCRIPTS_DIR),
         'TESTS_DIR': str(TESTS_DIR),
-        'JOURNAL_MODEL': JOURNAL_MODEL,
         'SUMMARY_MODEL': SUMMARY_MODEL,
         'MAIN_MODEL': MAIN_MODEL,
         'COMPUTER_USE_BETA_FLAG': COMPUTER_USE_BETA_FLAG,
         'PROMPT_CACHING_BETA_FLAG': PROMPT_CACHING_BETA_FLAG,
-        'JOURNAL_MAX_TOKENS': JOURNAL_MAX_TOKENS,
         'MAX_SUMMARY_MESSAGES': MAX_SUMMARY_MESSAGES,
         'MAX_SUMMARY_TOKENS': MAX_SUMMARY_TOKENS,
         'LOGS_DIR': str(LOGS_DIR),

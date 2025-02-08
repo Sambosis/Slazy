@@ -1,0 +1,23 @@
+uv add pip install anthropic anyio replicate ftfy icecream  openai pandas playwright pyautogui python-dotenv tenacity types-beautifulsoup4 types-pyautogui unimport rich
+pip install anthropic anyio replicate ftfy icecream  openai pandas playwright pyautogui python-dotenv tenacity  rich
+
+anthropic
+bs4
+dotenv
+ftfy
+re
+flask
+flask_socketio
+PIL
+icecream
+openai
+pandas
+playwright
+pyautogui
+pydantic
+pygments
+replicate
+requests
+rich
+serpapi
+tenacity

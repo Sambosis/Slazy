@@ -9,7 +9,7 @@ from pathlib import Path
 from re import U
 from typing import Any, Callable, Dict, List, Optional, cast
 import webbrowser
-
+from openai import OpenAI
 from config import *
 write_constants_to_file()
 
@@ -142,13 +142,14 @@ async def reorganize_context(messages: List[BetaMessageParam], summary: str) -> 
     You will probably be able to infer from the section labeled <NARATIVE>  </NARATIVE> what has been done. 
     However you will need the info the section labeled <MESSAGES>   </MESSAGES> in order to figure out why it didn't work. 
     You are to response to this needs to be inclosed in XML style tags called <COMPLETED>   </COMPETED>
-    This in a neatly organized outline format. 
+   
     The second part of the response is to list the steps that need to be taken to complete the task.
     You will need to take the whole context into account in order to    figure out what needs to be done.
     You must list between 0 (you have deemed the task complete) and 4 steps that need to be taken to complete the task.
-    You should try to devise a plan that uses the least possible steps to compete the task. 
+    You should try to devise a plan that uses the least possible steps to compete the task, while insuring that you complete thetask
     Your response to this needs to be enclosed in XML style tags called <STEPS>   </STEPS>
     Please make sure your steps are clear, concise, and in a logical order and actionable. 
+    Number them 1 through 4 in the order they should be done.
     Here is the Narative part:
     <NARATIVE>
     {summary}
@@ -164,13 +165,13 @@ async def reorganize_context(messages: List[BetaMessageParam], summary: str) -> 
     model = "o3-mini"
     response = sum_client.chat.completions.create(
         model=model,
-        max_tokens=30000,
+        max_completion_tokens=30000,
         messages=[{
             "role": "user",
             "content": summary_prompt
         }]
     )
-    summary = completion.choices[0].message.content
+    summary = response.choices[0].message.content
     start_tag = "<COMPLETED>"
     end_tag = "</COMPLETED>"
     if start_tag in summary and end_tag in summary:
@@ -327,9 +328,6 @@ class TokenTracker:
         token_display = f"\n{total_usage}"
         self.displayA.add_message("user", token_display)
 
-with open(JOURNAL_SYSTEM_PROMPT_FILE, 'r', encoding="utf-8") as f:
-    JOURNAL_SYSTEM_PROMPT = f.read()
-
 def extract_files_content() -> str:
     """Extract contents of all files logged in file_creation_log.json and format them with headers."""
     try:
@@ -367,14 +365,6 @@ def _extract_text_from_content(content: Any) -> str:
                             text_parts.append(sub_item.get("text", ""))
         return " ".join(text_parts)
     return ""
-
-def get_journal_contents() -> str:
-    try:
-        with open(JOURNAL_FILE, 'r', encoding='utf-8') as f:
-            file_contents =  f.read()
-            return ftfy.fix_text(file_contents)
-    except FileNotFoundError:
-        return "No journal entries yet."
 
 def truncate_message_content(content: Any, max_length: int = 300000) -> Any:
     if isinstance(content, str):
@@ -528,7 +518,7 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                     message_string = format_messages_to_string(messages)
                     f.write(message_string)
                     
-                if len(messages) > 18:
+                if len(messages) > 22:
                     last_3_messages = messages[-3:]
                     new_context = await refresh_context_async(task, messages, display)
                     messages = [{"role": "user", "content": new_context}]

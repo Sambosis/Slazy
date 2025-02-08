@@ -2,6 +2,7 @@ from typing import Literal
 from pathlib import Path
 from .base import ToolResult, BaseAnthropicTool
 import replicate
+import base64
 from icecream import ic
 from enum import Enum
 from dotenv import load_dotenv
@@ -73,10 +74,13 @@ class PictureGenerationTool(BaseAnthropicTool):
 
             output_files = []
             for index, item in enumerate(output):
+                # Read image bytes
+                image_data = item.read()
+                # Convert the image data to a base64 encoded string
+                base64_data = base64.b64encode(image_data).decode("utf-8")
+                # Optionally, if you want to save the image as well:
                 output_file = f"{output_path}"
-                # Save original image
                 with open(output_file, "wb") as file:
-                    image_data = item.read()
                     file.write(image_data)
 
                 # Resize if dimensions are provided
@@ -93,7 +97,15 @@ class PictureGenerationTool(BaseAnthropicTool):
                     
                     resized_img = img.resize(new_size, PIL.Image.LANCZOS)
                     resized_img.save(output_file)
-
+                html_message = (
+                        "<div>"
+                        "<p>Here is your generated image:</p>"
+                        f'<img src="data:image/png;base64,{base64_data}" alt="Generated Image" style="max-width:100%;">'
+                        "</div>"
+                    )
+                self.display.add_message("user", html_message)
+                self.display.add_message("tool", html_message)
+                self.display.add_message("assistant", html_message)
                 output_files.append(output_file)
 
             return {

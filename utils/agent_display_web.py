@@ -74,8 +74,8 @@ class AgentDisplayWeb:
         # Emit an update event to all connected clients
         self.socketio.emit('update', {
             'user': self.user_messages[-8:][::-1],  # Only send the last eight messages in reverse order
-            'assistant': self.assistant_messages[-2:][::-1], # Only send the last two messages in reverse order
-            'tool': self.tool_results[-5:][::-1] # Only send the last five messages in reverse order
+            'assistant': self.assistant_messages[-4:][::-1], # Only send the last two messages in reverse order
+            'tool': self.tool_results[-6:][::-1] # Only send the last five messages in reverse order
         })
 
     def add_message(self, msg_type, content):
