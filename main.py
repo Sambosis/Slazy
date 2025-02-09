@@ -518,7 +518,7 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                     message_string = format_messages_to_string(messages)
                     f.write(message_string)
                     
-                if len(messages) > 22:
+                if len(messages) > 32:
                     last_3_messages = messages[-3:]
                     new_context = await refresh_context_async(task, messages, display)
                     messages = [{"role": "user", "content": new_context}]
@@ -565,14 +565,13 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                             # #display.live.start()
                             await asyncio.sleep(0.2)
                 if not tool_result_content:
-                    # Inform the user on the web interface that input is awaited.
                     display.add_message("assistant", "Awaiting User Input ⌨️ (Type your response in the web interface)")
-                    # Wait asynchronously for user input via SocketIO.
                     user_input = await display.wait_for_user_input()
                     if user_input.lower() in ["no", "n"]:
                         running = False
                     else:
                         messages.append({"role": "user", "content": user_input})
+
 
                 token_tracker.update(response)
                 token_tracker.display(display)
@@ -654,8 +653,23 @@ def _maybe_filter_to_n_most_recent_images(
                 new_content.append(content)
             tool_result["content"] = new_content
 
-async def summarize_recent_messages(messages: List[BetaMessageParam], display: AgentDisplayWebWithPrompt) -> str:
-    sum_client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+async def summarize_recent_messages(messages: List[BetaMessageParam], display: AgentDisplayWebWithPrompt) -> str:    # sum_client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    sum_client = OpenAI()
+    model = "o3-mini"
+    conversation_text = ""
+    for msg in messages:
+        role = msg['role'].upper()
+        if isinstance(msg['content'], list):
+            for block in msg['content']:
+                if isinstance(block, dict):
+                    if block.get('type') == 'text':
+                        conversation_text += f"\n{role}: {block.get('text', '')}"
+                    elif block.get('type') == 'tool_result':
+                        for item in block.get('content', []):
+                            if item.get('type') == 'text':
+                                conversation_text += f"\n{role} (Tool Result): {item.get('text', '')}"
+        else:
+            conversation_text += f"\n{role}: {msg['content']}"
     conversation_text = ""
     for msg in messages:
         role = msg['role'].upper()
@@ -678,21 +692,35 @@ async def summarize_recent_messages(messages: List[BetaMessageParam], display: A
     Your response inside of the tags should be in HTML format that would make it easy for the reader to understand and view the summary.
     Messages to summarize:
     {conversation_text}"""
-    response = sum_client.messages.create(
-        model=SUMMARY_MODEL,
-        max_tokens=MAX_SUMMARY_TOKENS,
-        messages=[{
-            "role": "user",
-            "content": summary_prompt
-        }]
-    )
-    summary = response.content[0].text
-    start_tag = "<SUMMARY_RESPONSE>"
-    end_tag = "</SUMMARY_RESPONSE>"
-    if start_tag in summary and end_tag in summary:
-        summary = summary[summary.find(start_tag)+len(start_tag):summary.find(end_tag)]
-    return summary
+    messages = [
+    {
+          "role": "user",
+          "content": [
+              
+                    {
+                        
+                    "type": "text",
+                    "text": summary_prompt
+                    },
+                ]
+                }
+            ]
 
+    ic(messages)
+    completion = sum_client.chat.completions.create(
+    model=model,
+    messages=messages)
+    ic(completion)
+    # response = sum_client.messages.create(
+    #     model=SUMMARY_MODEL,
+    #     max_tokens=MAX_SUMMARY_TOKENS,
+    #     messages=[{
+    #         "role": "user",
+    #         "content": summary_prompt
+    #     }]
+    # )
+    summary = completion.choices[0].message.content
+    return summary
 async def run_sampling_loop(task: str, display: AgentDisplayWebWithPrompt) -> List[BetaMessageParam]:
     """Run the sampling loop with clean output handling."""
     api_key = os.getenv("ANTHROPIC_API_KEY")
@@ -710,15 +738,13 @@ async def run_sampling_loop(task: str, display: AgentDisplayWebWithPrompt) -> Li
     return messages
 
 
-# Run the web server indefinitely.
-
 async def main_async():
     display = AgentDisplayWebWithPrompt()
-    display.start_server()  # Start the SocketIO/Flask server in a background thread.
-    print("Please navigate to http://localhost:5000/select_prompt to select or create a prompt.")
+    # Set the main event loop in the display.
+    display.loop = asyncio.get_running_loop()
+    display.start_server()  # Start the Flask/SocketIO server in a background thread.
     webbrowser.open("http://localhost:5000/select_prompt")
-
-    # Keep the async main alive.
+    print("Server started. Please use your browser to interact with the application.")
     while True:
         await asyncio.sleep(1)
 

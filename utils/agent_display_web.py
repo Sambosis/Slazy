@@ -1,18 +1,13 @@
-import threading
 import os
+import threading
+import asyncio
 from queue import Queue
 from flask import Flask, render_template, jsonify
-from flask_socketio import SocketIO, emit
+from flask_socketio import SocketIO
 from config import USER_LOG_FILE, ASSISTANT_LOG_FILE, TOOL_LOG_FILE, LOGS_DIR
-from utils.agent_display import log_message  # assuming you have your log_message function available
-# Compute the project root by going up one directory from utils/
-project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-# Now point to the templates folder at the root
-template_dir = os.path.join(project_root, "templates")
-
 
 def log_message(msg_type, message):
-    """Log a message to a file"""
+    """Log a message to a file."""
     if msg_type == "user":
         emojitag = "🤡 "
     elif msg_type == "assistant":
@@ -25,63 +20,78 @@ def log_message(msg_type, message):
     with open(log_file, "a", encoding="utf-8") as file:
         file.write(emojitag * 5)
         file.write(f"\n{message}\n\n")
+
 class AgentDisplayWeb:
     """
-    A class for managing and displaying messages on a web page.
-    This version uses Flask and SocketIO to update connected clients
-    in real time.
+    A class for managing and displaying messages on a web page using Flask and SocketIO.
     """
     def __init__(self):
+        # Assume that templates folder is at the project root.
         template_dir = os.path.join(os.getcwd(), "templates")
         self.app = Flask(__name__, template_folder=template_dir)
+        self.app.config['SECRET_KEY'] = 'secret!'
+        self.app.debug = True  # Enable debug mode for detailed errors.
+        self.socketio = SocketIO(self.app, async_mode='threading')
         self.user_messages = []
         self.assistant_messages = []
         self.tool_results = []
         self.message_queue = Queue()
-        # self.app = Flask(__name__, template_folder="utils/templates")
-
-        self.app.config['SECRET_KEY'] = 'secret!'
-        self.socketio = SocketIO(self.app, async_mode='threading')
+        # We'll use an asyncio.Queue to deliver user input.
+        self.input_queue = asyncio.Queue()
+        self.loop = None  # This should be set by the main async function.
         self.setup_routes()
-    # def __init__(self):
-    #     # Assume that templates folder is at the project root.
-    #     template_dir = os.path.join(os.getcwd(), "templates")
-    #     self.app = Flask(__name__, template_folder=template_dir)
-    #     self.app.config['SECRET_KEY'] = 'secret!'
-    #     self.app.debug = True  # Enable debug mode to show errors.
-    #     self.socketio = SocketIO(self.app, async_mode='threading')
-    #     self.user_messages = []
-    #     self.assistant_messages = []
-    #     self.tool_results = []
-    #     self.message_queue = Queue()
-    #     self.setup_routes()
+        self.setup_socketio_events()
 
     def setup_routes(self):
         @self.app.route('/')
         def index():
-            return render_template("index.html")
+            try:
+                return render_template("index.html")
+            except Exception as e:
+                return f"Error rendering index: {e}", 500
 
         @self.app.route('/messages')
         def get_messages():
-            # This route can be used for an AJAX poll if needed
             return jsonify({
                 'user': self.user_messages,
                 'assistant': self.assistant_messages,
                 'tool': self.tool_results
             })
 
+    def setup_socketio_events(self):
+        @self.socketio.on('user_input')
+        def handle_user_input(data):
+            print("[DEBUG] Received user_input event with data:", data)
+            user_input = data.get('input', '')
+            if self.loop is not None:
+                # Enqueue the input on the main event loop
+                self.loop.call_soon_threadsafe(self.input_queue.put_nowait, user_input)
+                print("[DEBUG] Enqueued user input:", user_input)
+            else:
+                print("[DEBUG] No event loop set; cannot enqueue user input")
+            return None
+
+    async def wait_for_user_input(self):
+        """
+        Wait for user input sent from the client via SocketIO.
+        Returns:
+            The user input as a string.
+        """
+        # Wait for an item to appear in the queue.
+        user_input = await self.input_queue.get()
+        print("[DEBUG] wait_for_user_input returning:", user_input)
+        return user_input
+
     def broadcast_update(self):
         # Emit an update event to all connected clients
         self.socketio.emit('update', {
             'user': self.user_messages[-8:][::-1],  # Only send the last eight messages in reverse order
-            'assistant': self.assistant_messages[-4:][::-1], # Only send the last two messages in reverse order
+            'assistant': self.assistant_messages[-5:][::-1], # Only send the last two messages in reverse order
             'tool': self.tool_results[-6:][::-1] # Only send the last five messages in reverse order
         })
 
+
     def add_message(self, msg_type, content):
-        """
-        Adds a message to the appropriate list and broadcasts an update.
-        """
         log_message(msg_type, content)
         if msg_type == "user":
             self.user_messages.append(content)
@@ -92,9 +102,6 @@ class AgentDisplayWeb:
         self.broadcast_update()
 
     def clear_messages(self, panel):
-        """
-        Clears messages from a given panel (or all panels if 'all').
-        """
         if panel in ("user", "all"):
             self.user_messages.clear()
         if panel in ("assistant", "all"):
@@ -103,16 +110,11 @@ class AgentDisplayWeb:
             self.tool_results.clear()
         self.broadcast_update()
 
-
     def start_server(self, host='0.0.0.0', port=5000):
-        import threading
-        thread = threading.Thread(target=self.socketio.run, args=(self.app,), kwargs={'host': host, 'port': port})
+        thread = threading.Thread(
+            target=self.socketio.run,
+            args=(self.app,),
+            kwargs={'host': host, 'port': port, 'use_reloader': False}
+        )
         thread.daemon = True
         thread.start()
-
-
-    # def start_server(self, host='0.0.0.0', port=5000, debug=False):
-    #     # Start the Flask-SocketIO server in a background thread.
-    #     thread = threading.Thread(target=self.socketio.run, args=(self.app,), kwargs={'host': host, 'port': port, 'debug': debug})
-    #     thread.daemon = True
-    #     thread.start()

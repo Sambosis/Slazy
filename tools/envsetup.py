@@ -104,14 +104,14 @@ class ProjectSetupTool(BaseAnthropicTool):
         project_path.mkdir(parents=True, exist_ok=True)
         os.chdir(project_path)
         ic("Creating Python virtual environment...")
-        self.run_command("uv venv")
-        try:
-            self.run_command("uv init --no-config")
-        except:
-            pass
+        self.run_command("python -m venv .venv") 
+        # try:
+        #     self.run_command("uv init --no-config")
+        # except:
+        #     pass
         ic("Installing Python packages...")
         for package in packages:
-            self.run_command(f"uv add {package}")
+            self.run_command(f"python -m pip install {package}")
         return {
             "command": "setup_project",
             "status": "success",
@@ -123,7 +123,7 @@ class ProjectSetupTool(BaseAnthropicTool):
         os.chdir(project_path)
         ic("Installing additional Python packages...")
         for package in packages:
-            self.run_command(f"uv add {package}")
+            self.run_command(f"python -m pip install {package}")
         return {
             "command": "add_additional_depends",
             "status": "success",
@@ -135,7 +135,7 @@ class ProjectSetupTool(BaseAnthropicTool):
         os.chdir(project_path)
         try:
             result = subprocess.run(
-                ["uv", "run", filename],
+                ["python", filename],
                 capture_output=True,
                 text=True,
                 check=True

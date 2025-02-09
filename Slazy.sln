@@ -1,0 +1,53 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "repo", "repo", "{E0BFB7F9-96C7-8282-BB79-8EECA15E81F6}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildChecker", "repo\3dsim\BuildChecker.csproj", "{A5FD7CB4-3F87-799B-984B-CF90D0B3316A}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CarAeroSim", "repo\3dsim\CarAeroSim.csproj", "{B30FA9B8-7F0B-F114-D05A-408DB815899E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnvironmentCheck", "repo\3dsim\EnvironmentCheck.csproj", "{7E92A8C9-C136-D4F4-2ADA-1D937E3B06E7}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "3dsim", "3dsim", "{032BB0BB-067C-2D8F-F185-79994FD17C30}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestApp", "repo\3dsim\TestApp\TestApp.csproj", "{1FC49240-D658-1F6C-E4AA-40FF3E7F98ED}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{A5FD7CB4-3F87-799B-984B-CF90D0B3316A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A5FD7CB4-3F87-799B-984B-CF90D0B3316A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A5FD7CB4-3F87-799B-984B-CF90D0B3316A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A5FD7CB4-3F87-799B-984B-CF90D0B3316A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B30FA9B8-7F0B-F114-D05A-408DB815899E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B30FA9B8-7F0B-F114-D05A-408DB815899E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B30FA9B8-7F0B-F114-D05A-408DB815899E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B30FA9B8-7F0B-F114-D05A-408DB815899E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7E92A8C9-C136-D4F4-2ADA-1D937E3B06E7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7E92A8C9-C136-D4F4-2ADA-1D937E3B06E7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7E92A8C9-C136-D4F4-2ADA-1D937E3B06E7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7E92A8C9-C136-D4F4-2ADA-1D937E3B06E7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1FC49240-D658-1F6C-E4AA-40FF3E7F98ED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1FC49240-D658-1F6C-E4AA-40FF3E7F98ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1FC49240-D658-1F6C-E4AA-40FF3E7F98ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1FC49240-D658-1F6C-E4AA-40FF3E7F98ED}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{A5FD7CB4-3F87-799B-984B-CF90D0B3316A} = {E0BFB7F9-96C7-8282-BB79-8EECA15E81F6}
+		{B30FA9B8-7F0B-F114-D05A-408DB815899E} = {E0BFB7F9-96C7-8282-BB79-8EECA15E81F6}
+		{7E92A8C9-C136-D4F4-2ADA-1D937E3B06E7} = {E0BFB7F9-96C7-8282-BB79-8EECA15E81F6}
+		{032BB0BB-067C-2D8F-F185-79994FD17C30} = {E0BFB7F9-96C7-8282-BB79-8EECA15E81F6}
+		{1FC49240-D658-1F6C-E4AA-40FF3E7F98ED} = {032BB0BB-067C-2D8F-F185-79994FD17C30}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {944461D7-DE9A-48E9-B54D-A1B94768C38B}
+	EndGlobalSection
+EndGlobal

@@ -1,4 +1,3 @@
-<!-- index.html (Modified) -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -9,11 +8,19 @@
     body { font-family: Arial, sans-serif; }
     .panel { border: 1px solid #ccc; padding: 10px; margin: 10px; }
     .user { background-color: #d0f0d0; }
-    .assistant { background-color: #d0d0f0; }
-    /* No longer need hardcoded Pygments CSS here */
+    .assistant { 
+      background-color: #d0d0f0;
+      font-size: 1.3em;  /* Make assistant messages 20% larger */
+    }
+    #inputForm { margin: 20px; }
   </style>
 </head>
 <body>
+    <!-- Input form for user responses -->
+  <div id="inputForm">
+    <input type="text" id="userInput" placeholder="Type your response here">
+    <button id="sendInput">Send</button>
+  </div>
   <div class="panel assistant" id="assistant_panel">
     <h2>Assistant Messages</h2>
     <div id="assistant_messages"></div>
@@ -28,57 +35,61 @@
   </div>
 
   <script>
-    var socket = io();
-    socket.on('connect', function() {
-      console.log("Connected to server");
+  // Force polling transport to avoid websocket handshake issues.
+  var socket = io({ transports: ['polling'] });
+
+  socket.on('connect', function() {
+    console.log("Connected to server");
+  });
+
+  // Listen for updates
+  socket.on('update', function(data) {
+    // Update User Messages
+    var userDiv = document.getElementById('user_messages');
+    userDiv.innerHTML = '';
+    data.user.forEach(function(message) {
+      var msgElement = document.createElement('div');
+      msgElement.innerHTML = message;
+      userDiv.appendChild(msgElement);
     });
 
-    // Listen for updates
-    socket.on('update', function(data) {
-      // User messages
-      var userDiv = document.getElementById('user_messages');
-      userDiv.innerHTML = ''; // Clear previous content
-      data.user.forEach(function(message) {
-        var msgElement = document.createElement('div');
-        msgElement.innerHTML = message;
-        userDiv.appendChild(msgElement);
-      });
+    // Update Assistant Messages
+    var assistantDiv = document.getElementById('assistant_messages');
+    assistantDiv.innerHTML = '';
+    data.assistant.forEach(function(message) {
+      var msgElement = document.createElement('div');
+      msgElement.innerHTML = message;
+      assistantDiv.appendChild(msgElement);
+    });
 
-      // Assistant messages
-      var assistantDiv = document.getElementById('assistant_messages');
-      assistantDiv.innerHTML = ''; // Clear previous content
-      data.assistant.forEach(function(message) {
-        var msgElement = document.createElement('div');
-        msgElement.innerHTML = message;
-        assistantDiv.appendChild(msgElement);
-      });
-
-      // Tool messages - now handling CSS dynamically
-      var toolDiv = document.getElementById('tool_messages');
-      toolDiv.innerHTML = ''; // Clear previous content
-      data.tool.forEach(function(message) {
-        // Check if message is an object with code and css
-        if (typeof message === 'object' && message.code && message.css) {
-          // 1. Add CSS (only if style tag doesn't exist)
-          if (!document.getElementById('pygments-style')) {
-            var styleElement = document.createElement('style');
-            styleElement.id = 'pygments-style';
-            styleElement.innerHTML = message.css;
-            document.head.appendChild(styleElement);
-          }
-
-          // 2. Add code
-          var codeElement = document.createElement('div');
-          codeElement.innerHTML = message.code;
-          toolDiv.appendChild(codeElement);
-        } else {
-          // Handle regular messages (not code)
-          var msgElement = document.createElement('div');
-          msgElement.innerHTML = message;
-          toolDiv.appendChild(msgElement);
+    // Update Tool Results
+    var toolDiv = document.getElementById('tool_messages');
+    toolDiv.innerHTML = '';
+    data.tool.forEach(function(message) {
+      if (typeof message === 'object' && message.code && message.css) {
+        if (!document.getElementById('pygments-style')) {
+          var styleElement = document.createElement('style');
+          styleElement.id = 'pygments-style';
+          styleElement.innerHTML = message.css;
+          document.head.appendChild(styleElement);
         }
-      });
+        var codeElement = document.createElement('div');
+        codeElement.innerHTML = message.code;
+        toolDiv.appendChild(codeElement);
+      } else {
+        var msgElement = document.createElement('div');
+        msgElement.innerHTML = message;
+        toolDiv.appendChild(msgElement);
+      }
     });
-  </script>
+    });
+    document.getElementById('sendInput').addEventListener('click', function() {
+      var input = document.getElementById('userInput').value;
+      if (input) {
+        socket.emit('user_input', { input: input });
+        document.getElementById('userInput').value = '';
+      }
+  });
+</script>
 </body>
 </html>

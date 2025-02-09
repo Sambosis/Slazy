@@ -862,7 +862,23 @@ def _maybe_filter_to_n_most_recent_images(
             tool_result["content"] = new_content
 
 async def summarize_recent_messages(messages: List[BetaMessageParam], display: AgentDisplayWeb) -> str:
-    sum_client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    # sum_client = Anthropic(api_key=os.getenv("ANTHROPIC_API_KEY"))
+    sum_client = OpenAI()
+    model = "o3-mini"
+    conversation_text = ""
+    for msg in messages:
+        role = msg['role'].upper()
+        if isinstance(msg['content'], list):
+            for block in msg['content']:
+                if isinstance(block, dict):
+                    if block.get('type') == 'text':
+                        conversation_text += f"\n{role}: {block.get('text', '')}"
+                    elif block.get('type') == 'tool_result':
+                        for item in block.get('content', []):
+                            if item.get('type') == 'text':
+                                conversation_text += f"\n{role} (Tool Result): {item.get('text', '')}"
+        else:
+            conversation_text += f"\n{role}: {msg['content']}"
     conversation_text = ""
     for msg in messages:
         role = msg['role'].upper()
@@ -885,15 +901,34 @@ async def summarize_recent_messages(messages: List[BetaMessageParam], display: A
     Your response inside of the tags should be in HTML format that would make it easy for the reader to understand and view the summary.
     Messages to summarize:
     {conversation_text}"""
-    response = sum_client.messages.create(
-        model=SUMMARY_MODEL,
-        max_tokens=MAX_SUMMARY_TOKENS,
-        messages=[{
-            "role": "user",
-            "content": summary_prompt
-        }]
-    )
-    summary = response.content[0].text
+    messages = [
+    {
+          "role": "user",
+          "content": [
+              
+                    {
+                        
+                    "type": "text",
+                    "text": summary_prompt
+                    },
+                ]
+                }
+            ]
+
+    
+    completion = sum_client.chat.completions.create(
+    model=model,
+    messages=messages)
+    # response = sum_client.messages.create(
+    #     model=SUMMARY_MODEL,
+    #     max_tokens=MAX_SUMMARY_TOKENS,
+    #     messages=[{
+    #         "role": "user",
+    #         "content": summary_prompt
+    #     }]
+    # )
+    summary = completion.choices[0].message.content
+
     start_tag = "<SUMMARY_RESPONSE>"
     end_tag = "</SUMMARY_RESPONSE>"
     if start_tag in summary and end_tag in summary:

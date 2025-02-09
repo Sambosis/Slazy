@@ -59,60 +59,70 @@ class PictureGenerationTool(BaseAnthropicTool):
     async def generate_picture(self, prompt: str, output_path: str, width: int = None, height: int = None) -> dict:
         """Generates a picture using the Flux Schnell model"""
         try:
-            # Create output directory if it doesn't exist
+            # Ensure output directory exists
             output_dir = Path(output_path).parent
             output_dir.mkdir(parents=True, exist_ok=True)
 
             input_data = {
-                "prompt": prompt
+                "prompt": prompt,
+                "prompt_upsampling": True
             }
+            
+            # Get the image data from replicate
             client = replicate.Client()
-            output = client.run(
-                "black-forest-labs/flux-schnell",
+            output_iterator = client.run(
+                "black-forest-labs/flux-1.1-pro",
                 input=input_data
             )
+            
+            # Collect all bytes from the iterator
+            image_data = b''
+            for chunk in output_iterator:
+                if isinstance(chunk, bytes):
+                    image_data += chunk
+            
+            if not image_data:
+                raise Exception("No image data received from the model")
 
-            output_files = []
-            for index, item in enumerate(output):
-                # Read image bytes
-                image_data = item.read()
-                # Convert the image data to a base64 encoded string
-                base64_data = base64.b64encode(image_data).decode("utf-8")
-                # Optionally, if you want to save the image as well:
-                output_file = f"{output_path}"
-                with open(output_file, "wb") as file:
-                    file.write(image_data)
+            # Save the raw bytes to file
+            with open(output_path, 'wb') as f:
+                f.write(image_data)
 
-                # Resize if dimensions are provided
-                if width or height:
-                    img = PIL.Image.open(output_file)
-                    if width and height:
-                        new_size = (width, height)
-                    elif width:
-                        ratio = width / img.width
-                        new_size = (width, int(img.height * ratio))
-                    else:
-                        ratio = height / img.height
-                        new_size = (int(img.width * ratio), height)
-                    
-                    resized_img = img.resize(new_size, PIL.Image.LANCZOS)
-                    resized_img.save(output_file)
-                html_message = (
-                        "<div>"
-                        "<p>Here is your generated image:</p>"
-                        f'<img src="data:image/png;base64,{base64_data}" alt="Generated Image" style="max-width:100%;">'
-                        "</div>"
-                    )
-                self.display.add_message("user", html_message)
+            # Create base64 for display
+            base64_data = base64.b64encode(image_data).decode("utf-8")
+
+            # Handle resizing if needed
+            if width or height:
+                img = PIL.Image.open(output_path)
+                if width and height:
+                    new_size = (width, height)
+                elif width:
+                    ratio = width / img.width
+                    new_size = (width, int(img.height * ratio))
+                else:
+                    ratio = height / img.height
+                    new_size = (int(img.width * ratio), height)
+                
+                resized_img = img.resize(new_size, PIL.Image.LANCZOS)
+                resized_img.save(output_path)
+
+            # Display message
+            html_message = (
+                "<div>"
+                "<p>Generated image saved to: {}</p>"
+                f'<img src="data:image/png;base64,{base64_data}" alt="Generated Image" style="max-width:100%;">'
+                "</div>"
+            ).format(output_path)
+
+            if self.display:
                 self.display.add_message("tool", html_message)
-                self.display.add_message("assistant", html_message)
-                output_files.append(output_file)
 
             return {
                 "status": "success",
-                "output_files": output_files,
+                "output_files": [output_path],
                 "prompt": prompt
             }
+
         except Exception as e:
             return {
                 "status": "error",

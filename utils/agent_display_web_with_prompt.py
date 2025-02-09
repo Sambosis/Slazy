@@ -1,10 +1,8 @@
 import os
-import threading
+import asyncio
 from flask import render_template, request, redirect, url_for
 from utils.agent_display_web import AgentDisplayWeb
-from config import PROMPTS_DIR, set_constant, set_project_dir
-
-import asyncio
+from config import PROMPTS_DIR
 class AgentDisplayWebWithPrompt(AgentDisplayWeb):
     def __init__(self):
         super().__init__()
@@ -14,35 +12,45 @@ class AgentDisplayWebWithPrompt(AgentDisplayWeb):
         @self.app.route('/select_prompt', methods=['GET', 'POST'])
         def select_prompt():
             if request.method == 'POST':
-                # Process the form submission.
-                choice = request.form.get('choice')
-                if choice == 'new':
-                    filename = request.form.get('filename')
-                    prompt_text = request.form.get('prompt_text')
-                    new_prompt_path = PROMPTS_DIR / f"{filename}.md"
-                    with open(new_prompt_path, 'w', encoding='utf-8') as f:
-                        f.write(prompt_text)
-                    task = prompt_text
-                else:
-                    prompt_path = PROMPTS_DIR / choice
-                    filename = prompt_path.stem
-                    with open(prompt_path, 'r', encoding='utf-8') as f:
-                        task = f.read()
-                # Set up project directory information.
-                # Replace 'your_project_module' with the actual module name where these functions are defined.
-                project_dir = set_project_dir(filename)
-                set_constant("PROJECT_DIR", str(project_dir))
-                task += f"Your project directory is {project_dir}. You need to make sure that all files you create and work you do is done in that directory.\n"
-                # Start the sampling loop in a background thread.
-                def run_loop():
+                try:
+                    choice = request.form.get('choice')
+                    if choice == 'new':
+                        filename = request.form.get('filename')
+                        prompt_text = request.form.get('prompt_text')
+                        new_prompt_path = PROMPTS_DIR / f"{filename}.md"
+                        with open(new_prompt_path, 'w', encoding='utf-8') as f:
+                            f.write(prompt_text)
+                        task = prompt_text
+                    else:
+                        prompt_path = PROMPTS_DIR / choice
+                        filename = prompt_path.stem
+                        with open(prompt_path, 'r', encoding='utf-8') as f:
+                            task = f.read()
+                    # Set up project directory information.
+                    # Replace 'your_project_module' with the actual module name.
                     from main import run_sampling_loop
-                    asyncio.run(run_sampling_loop(task, self))
-                threading.Thread(target=run_loop, daemon=True).start()
-                return redirect(url_for('index'))
-            else:
-                # On GET, list available prompt files.
-                prompt_files = list(PROMPTS_DIR.glob("*.md"))
-                options = [file.name for file in prompt_files]
-                return render_template('select_prompt.html', options=options)
+                    from config import set_project_dir,    set_constant
+                    project_dir = set_project_dir(filename)
+                    set_constant("PROJECT_DIR", str(project_dir))
+                    task += (
+                        f"Your project directory is {project_dir}. "
+                        "You need to make sure that all files you create and work you do is done in that directory.\n"
+                    )
 
-        # (The /messages route is already defined in the base class.)
+                    if self.loop is None:
+                        # Instead of attempting to get a running loop here (which fails in this thread),
+                        # return an error.
+                        return "Error: Event loop not set", 500
+
+                    # Schedule the sampling loop on the pre-set event loop.
+                    asyncio.run_coroutine_threadsafe(run_sampling_loop(task, self), self.loop)
+                    return redirect(url_for('index'))
+                except Exception as e:
+                    return f"Error processing prompt selection: {e}", 500
+            else:
+                try:
+                    prompt_files = list(PROMPTS_DIR.glob("*.md"))
+                    options = [file.name for file in prompt_files]
+                    return render_template('select_prompt.html', options=options)
+                except Exception as e:
+                    return f"Error rendering prompt selection: {e}", 500

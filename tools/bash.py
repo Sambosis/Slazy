@@ -85,7 +85,7 @@ def generate_script_with_llm(prompt: str) -> str:
 
         # 2. Use it like normal OpenAI calls
         response = client.chat.completions.create(
-            model="gpt-4o",  # Use model name your endpoint expects
+            model="o3-mini",  # Use model name your endpoint expects
             messages=[
                 {"role": "user", "content": prompt}
             ]

@@ -319,11 +319,12 @@ class WriteCodeTool(BaseAnthropicTool):
         code_string="no code created"
         OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
         current_code_base = get_all_current_code()
-        
-        client2 = OpenAI(
-            base_url="https://openrouter.ai/api/v1",
-            api_key=OPENROUTER_API_KEY,
-        )
+        client = OpenAI()
+        model = "o3-mini"
+        # client2 = OpenAI(
+        #     base_url="https://openrouter.ai/api/v1",
+        #     api_key=OPENROUTER_API_KEY,
+        # )
        
         
         # Prepare messages
@@ -364,7 +365,7 @@ class WriteCodeTool(BaseAnthropicTool):
         try:
             completion = client2.chat.completions.create(
             # model="perplexity/sonar-reasoning",
-            model="google/gemini-2.0-flash-001",
+            model=model,
             messages=messages)
         except Exception as e:
             ic(f"error: {e}")
