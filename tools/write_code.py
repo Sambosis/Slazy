@@ -16,20 +16,21 @@ from config import get_constant, set_constant, PROJECT_DIR, LOGS_DIR
 from openai import OpenAI
 from utils.file_logger import log_file_operation, get_all_current_code
 import time
+from system_prompt.code_prompts import code_prompt_research, code_prompt_generate
 from pygments import highlight
 from pygments.lexers import PythonLexer
 from pygments.formatters import HtmlFormatter
 from pygments.styles import get_style_by_name
-from utils.build123d import BUILD123D_INTRO
 from dotenv import load_dotenv
+import ftfy
 load_dotenv()
+
+
+
 ic.configureOutput(includeContext=True, outputFunction=write_to_file)
 class CodeCommand(str, Enum):
     WRITE_CODE_TO_FILE = "write_code_to_file"
     WRITE_AND_EXEC = "write_and_exec"
-
-import time
-import json
 
 def write_chat_completion_to_file(response, filepath):
     """Appends an OpenAI ChatCompletion object to a file in a human-readable format."""
@@ -194,9 +195,9 @@ class WriteCodeTool(BaseAnthropicTool):
         
         return code_block if code_block else "No Code Found", language
 
-
     async def _call_llm_to_generate_code(self, code_description: str, research_string: str, file_path) -> str:
         """Call LLM to generate code based on the code description"""
+        ic()
         code_string="no code created"
         OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
         current_code_base = get_all_current_code()
@@ -204,60 +205,23 @@ class WriteCodeTool(BaseAnthropicTool):
         client = OpenAI(
             base_url="https://openrouter.ai/api/v1",
             api_key=OPENROUTER_API_KEY,
-        )
-        
+            )
+        model = "google/gemini-2.0-flash-001"
+        ic(model)
         # Prepare messages
-        messages = [
-            {
-            "role": "system",
-            "content": [
-                {
-                "type": "text",
-                "text": "Your are an expert with software engineer and proud coder.  You are make carefully designed programs that work on the first try and take the whole scope of the program into consideration when creating a piece of code. You are well versed in many programming lanaguages"
-                },
-                ],
-            "role": "user",
-            "content": 
-            [
-                {
-                "type": "text",
-                "text": f"""At the bottom is a detailed description of code that you need to write. Flollow up by an expert review that gives some valuable suggestions. 
-                Make sure you provide your response in the requested programming lanaguage. Your response should include everything needed in order to run the file including imports that will be needed.
-
-                All of the code that you provide needs to be enclosed in a single markdown style code block with the language specified.
-                Here is an example of what your response should look like:
-                ```python
-                # Your code goes here
-                ```
-                If it was javascript it would look like this:
-                ```javascript
-                // Your code goes here
-                ```
-                Here is all of the code that has been created for the project so far:
-                {current_code_base}
-                
-                Here is the description of the code:
-                {code_description}
-                Here is the research that was done:
-                {research_string}
-                """
-                },
-            ]
-            }
-        ]
-        
+        messages = code_prompt_generate(current_code_base, code_description, research_string)
+        ic(messages)
         try:
             completion = client.chat.completions.create(
             # model="deepseek/deepseek-r1:nitro",
-            max_tokens=8000,
-            model="google/gemini-2.0-flash-001",
+            max_tokens=28000,
+            model=model,
             messages=messages)
         except Exception as e:
+            ic(completion)
             ic(f"error: {e}")
             return code_description
-            
         ic(completion)
-
         code_string = completion.choices[0].message.content
 
         # Extract code using the new function
@@ -279,6 +243,10 @@ class WriteCodeTool(BaseAnthropicTool):
             CODE_FILE = Path(get_constant("CODE_FILE"))
             with open(CODE_FILE, "a") as f:
                 f.write(str(file_path))
+                f.write("\nResearch:\n")
+                f.write(f"Language detected: {detected_language}\n")
+                f.write(research_string)
+                f.write(str(file_path))
                 f.write("\n")
                 f.write(f"Language detected: {detected_language}\n")
                 f.write(code_string)
@@ -291,15 +259,14 @@ class WriteCodeTool(BaseAnthropicTool):
                 except Exception:
                     pass
 
-
-
-        # Highlight the code
+        ### Highlight the code
         #  Create a Python lexer
         lexer = PythonLexer()
-
+        
         # Create an HTML formatter with full=False
         formatter = HtmlFormatter(style="monokai", full=False, linenos=True)
         code_temp=f"#{str(file_path)}\n{code_string}"
+
         # Highlight the code
         code_display = highlight(code_temp, lexer, formatter)
 
@@ -311,75 +278,42 @@ class WriteCodeTool(BaseAnthropicTool):
 
         return code_string
 
-  
-
-    async def _call_llm_to_review_code(self, code_description: str, file_path) -> str:
+    async def _call_llm_to_research_code(self, code_description: str, file_path) -> str:
         """Call LLM to generate code based on the code description"""
         ic()
-        code_string="no code created"
+        code_string = "no code created"
         OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
         current_code_base = get_all_current_code()
-        client = OpenAI()
+        client2 = OpenAI()
         model = "o3-mini"
-        # client2 = OpenAI(
-        #     base_url="https://openrouter.ai/api/v1",
-        #     api_key=OPENROUTER_API_KEY,
-        # )
-       
         
         # Prepare messages
-        messages=[
-                {
-                "role": "system",
-                "content": [
-                    {
-                    "type": "text",
-                    "text": """Your are an expert with software engineer and proud researcher.  You review code projects for Programmers and try to help them by giving them insight into the best approaches to accomplish their task.
-                    You try to anticipate common bugs, inefficiencies and suggest improvements to the origninal specs to add advanced performance and functionality.
-                    by  carefully reviewing programs that submittied you and sending them back a detailed report with suggesions of the best ways to accomplish their task.
-                    You are also to research and provide information about the context of the of the application and any domain specific knowledge that is needed to accomplish their task.
-                    You take the whole scope of the program into consideration when reviewing their task description."""
-                    },
-                    ],
-                "role": "user",
-                "content": [
-                    {
-                        
-                    "type": "text",
-                    "text": f"""At the bottom is a detailed description of code of the code the programmer needs to write.
-                    you will review it and help them by giving them insight into the best approaches to accomplish their task.
-                    You try to anticipate common bugs, inefficiencies and suggest improvements to the origninal specs to add advanced performance and functionality.
-                    by  carefully reviewing programs that submittied you and sending them back a detailed report with suggesions of the best ways to accomplish their task.
-                    
-                    Youd take the whole scope of the program into consideration when reviewing their task description                    ```python
-                    Here is all of the code that has been created for the project so far:
-                    {current_code_base}
-                    
-                    Here is the requeste:
-                    {code_description}"""
-                    },
-                ]
-                }
-            ]
-
+        messages = code_prompt_research(current_code_base, code_description)
+        ic(messages)
         try:
             completion = client2.chat.completions.create(
-            # model="perplexity/sonar-reasoning",
-            model=model,
-            messages=messages)
+                model=model,
+                messages=messages)
         except Exception as e:
+            ic(completion)
             ic(f"error: {e}")
             return code_description   
         ic(completion)
 
-        # Append messages to a file called ages.log
-        # CODE_FILE = Path(get_constant("CODE_FILE"))
-        # write_chat_completion_to_file(completion, CODE_FILE)
+        # Handle both OpenRouter and standard OpenAI response formats
+        try:
+            if hasattr(completion.choices[0].message, 'content'):
+                research_string = completion.choices[0].message.content
+            else:
+                research_string = completion.choices[0].message['content']
+        except (AttributeError, KeyError, IndexError) as e:
+            ic(f"Error extracting content: {e}")
+            return code_description
 
-        research_string = completion.choices[0].message.content
-        
+        ic(research_string)
+        research_string = ftfy.fix_text(research_string)
+        ic(research_string)
         return research_string
-
 
     def format_output(self, data: dict) -> str:
 
@@ -422,13 +356,17 @@ class WriteCodeTool(BaseAnthropicTool):
         # Join all lines with newlines
         return "\n".join(output_lines)
 
-
     async def write_code_to_file(self, code_description: str,  project_path: Path, filename) -> dict:
         """write code to a permanent file"""
         file_path = project_path / filename
-        code_research_string = await self._call_llm_to_review_code(code_description, file_path)
-        code_string = await self._call_llm_to_generate_code(code_description, code_research_string, file_path)
+        code_research_string = await self._call_llm_to_research_code(code_description, file_path)
+        ic(code_research_string)
 
+        with open("codeResearch.txt","a", encoding='utf-8') as f:
+            f.write(code_research_string)
+        ic(code_research_string)
+        code_string = await self._call_llm_to_generate_code(code_description, code_research_string, file_path)
+        ic(code_string)
         
         # Create the directory if it does not exist
         try:
@@ -472,7 +410,6 @@ class WriteCodeTool(BaseAnthropicTool):
             "filename": filename,
             "code_string": code_string
         }
-
            
     async def write_and_exec(self, code_description: str,  project_path: Path) -> dict:
         """Write code to a temp file and execute it"""

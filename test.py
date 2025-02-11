@@ -3,7 +3,7 @@ from openai import OpenAI
 import os
 # Load environment variables from .env file if it exists
 dotenv.load_dotenv()
-from system_prompt.code_helpers import PROMPT_FOR_CODE
+from system_prompt.code_prompts import PROMPT_FOR_CODE
 # Verify that required environment variables are set
 required_vars = ['OPENAI_API_KEY']
 missing_vars = [var for var in required_vars if not os.getenv(var)]

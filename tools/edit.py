@@ -10,7 +10,7 @@ from .run import maybe_truncate
 from typing import List, Optional
 from icecream import ic
 import sys
-
+import ftfy
 from rich import print as rr
 import datetime
 import json
@@ -109,7 +109,7 @@ class EditTool(BaseAnthropicTool):
                 self._file_history[_path].append(file_text)
                 log_file_operation(_path, "create")  
                 self.display.add_message("user", f"EditTool Command: {command}  successfully created file {_path} !")
-              
+                self.display.add_message("tool", file_text)
                 output_data = {
                     "command": "create",
                     "status": "success",

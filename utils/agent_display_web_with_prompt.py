@@ -1,3 +1,4 @@
+# agent_display_web_with_prompt.py
 import os
 import asyncio
 from flask import render_template, request, redirect, url_for
@@ -54,3 +55,15 @@ class AgentDisplayWebWithPrompt(AgentDisplayWeb):
                     return render_template('select_prompt.html', options=options)
                 except Exception as e:
                     return f"Error rendering prompt selection: {e}", 500
+        @self.app.route('/api/prompts/<filename>')
+        def get_prompt_content(filename):
+            try:
+                prompt_path = PROMPTS_DIR / filename
+                if not prompt_path.exists():
+                    return "Prompt file not found", 404
+                
+                with open(prompt_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                return content
+            except Exception as e:
+                return f"Error reading prompt: {e}", 500

@@ -199,13 +199,15 @@ async def refresh_context_async(task: str, messages: List[Dict], display: AgentD
     """
     filtered = filter_messages(messages)
     summary = get_all_summaries()
-
+    last4_messages = format_messages_to_string(messages[-4:])
     completed, steps = await reorganize_context(filtered, summary)
 
     file_contents = aggregate_file_states()
     combined_content = f"""Original request: {task}
     Current Completed Project Files:
     {file_contents}
+    Most Recent activity:
+    {last4_messages}
     List if things we've done and what has worked or not:
     {completed}
     ToDo List of tasks in order to complete the task:
@@ -252,6 +254,35 @@ def _make_api_tool_result(result: ToolResult, tool_use_id: str) -> Dict:
         "tool_use_id": tool_use_id,
         "is_error": is_error,
     }
+def format_messages_to_restart(messages):
+    """
+    Format a list of messages into a formatted string.
+    """
+    try:
+        output_pieces = []
+        for msg in messages:
+            output_pieces.append(f"\n{msg['role'].upper()}:")
+            if isinstance(msg["content"], list):
+                for content_block in msg["content"]:
+                    if isinstance(content_block, dict):
+                        if content_block.get("type") == "tool_result":
+                            output_pieces.append(
+                                f"\nResult:"  
+                            )
+                            for item in content_block.get("content", []):
+                                if item.get("type") == "text":
+                                    output_pieces.append(f"\n{item.get('text')}")
+                        else:
+                            for key, value in content_block.items():
+                                output_pieces.append(f"\n{value}")
+                    else:
+                        output_pieces.append(f"\n{content_block}")
+            else:
+                output_pieces.append(f"\n{msg['content']}")
+            output_pieces.append("\n" + "-" * 80)
+        return "".join(output_pieces)
+    except Exception as e:
+        return f"Error during formatting: {str(e)}"
 
 def format_messages_to_string(messages):
     """
@@ -329,26 +360,53 @@ class TokenTracker:
         self.displayA.add_message("user", token_display)
 
 def extract_files_content() -> str:
-    """Extract contents of all files logged in file_creation_log.json and format them with headers."""
-    try:
-        with open(LOG_FILE, 'r', encoding='utf-8') as f:
-            logs = json.loads(f.read())
-        output = []
-        for filepath in logs.keys():
-            try:
-                path = Path(filepath)
-                if not path.exists():
-                    continue
-                content = path.read_text(encoding='utf-8')
-                output.append(f"# filepath: {filepath}")
-                output.append(content)
-                output.append("\n" + "=" * 80 + "\n")
-            except Exception as e:
-                print(f"Error processing {filepath}: {str(e)}")
+    """ Returns the complete contents of all files with special handling for images """
+    LOG_FILE = Path(get_constant('LOG_FILE'))
+    # Create the file if it does not exist
+    if not LOG_FILE.exists():
+        LOG_FILE.touch()
+    # Read the log file
+    with open(LOG_FILE, 'r', encoding='utf-8') as f:
+        # Handle case of empty file
+        if f.read() == "":
+            return "No code yet"
+        f.seek(0)  # Reset file pointer to the beginning
+        logs = json.loads(f.read())
+    
+    # Initialize output string
+    output = []
+    
+    # Process each file in the logs
+    for filepath in logs.keys():
+        try:
+            # Convert Windows path to Path object
+            path = Path(filepath)
+            
+            # Skip if file doesn't exist
+            if not path.exists():
                 continue
-        return "\n".join(output)
-    except Exception as e:
-        return f"Error reading log file: {str(e)}"
+            
+            # Add file header
+            output.append(f"# filepath: {filepath}")
+            
+            # Check if it's an image file
+            if path.suffix.lower() in ['.png', '.jpg', '.jpeg', '.gif', '.bmp']:
+                output.append("[Image File]")
+                output.append(f"Created: {logs[filepath]['created_at']}")
+                output.append(f"Last Operation: {logs[filepath]['operations'][-1]['operation']}")
+            else:
+                # For non-image files, include the content
+                content = path.read_text(encoding='utf-8')
+                output.append(content)
+            
+            output.append("\n" + "=" * 80 + "\n")  # Separator between files
+            
+        except Exception as e:
+            print(f"Error processing {filepath}: {str(e)}")
+            continue
+    
+    # Combine all content
+    return "\n".join(output)
 
 def _extract_text_from_content(content: Any) -> str:
     if isinstance(content, str):
@@ -366,7 +424,7 @@ def _extract_text_from_content(content: Any) -> str:
         return " ".join(text_parts)
     return ""
 
-def truncate_message_content(content: Any, max_length: int = 300000) -> Any:
+def truncate_message_content(content: Any, max_length: int = 3_000_000) -> Any:
     if isinstance(content, str):
         return content[:max_length]
     elif isinstance(content, list):
@@ -395,6 +453,8 @@ def get_all_summaries() -> str:
 async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key: str, max_tokens: int = 8000, display: AgentDisplayWebWithPrompt) -> List[BetaMessageParam]:
     """Main loop for agentic sampling."""
     task = messages[0]['content']
+    context_recently_refreshed = False
+    interupt_counter = 0
     try:
         tool_collection = ToolCollection(
             BashTool(display=display),
@@ -417,6 +477,7 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
         output_manager = OutputManager(display)
         client = Anthropic(api_key=api_key)
         i = 0
+        refresh_count =28
         running = True
         token_tracker = TokenTracker(display)
         enable_prompt_caching = True
@@ -451,43 +512,7 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                     for msg in messages
                 ]
 
-                messages_to_display = messages[-1:] if len(messages) > 1 else messages[-1:]
-                for message in messages_to_display:
-                    if isinstance(message, dict):
-                        if message.get("type") == "text":
-                            display_output = message.get("text", "")
-                            display.add_message("user", "type text")
-                            await asyncio.sleep(0.1) 
-                        elif message.get("type") == "image":
-                            display_output = "Image"
-                        elif message.get("type") == "tool_result":
-                            display_output = message["content"][0].get("text", "")
-                            display.add_message("user", "type tool result")
-                        elif message.get("type") == "tool_use":
-                            display_output = f"Calling tool: {message.get('name', '')}"
-                            display_output += f"Input: {json.dumps(message.get('input', {}))}"
-                            display.add_message("user", "tool use")
-                        else:
-                            if len(messages) == 1:
-                                display_output = message['content']
-                            else:
-                                try:
-                                    display_output = message['content'][0]['content'][0]['text']
-                                except:
-                                    try:
-                                        display_output = message['content'][0]['text']
-                                    except:
-                                        display_output = message
-                    elif isinstance(message, str):
-                        display.add_message("user", "first elif")
-                        display_output = message
-                    else:
-                        display_output = str(message)
-                        display.add_message("user", "second Else")
-                    
-                    # display.add_message("user", display_output)
-                    await asyncio.sleep(0.1)
-                quick_summary = await summarize_recent_messages(messages[-4:], display)
+                quick_summary = await summarize_recent_messages(messages[-6:], display)
                 add_summary(quick_summary)
                 display.add_message("assistant", f"<p></p>{quick_summary}<p></p>")
                 await asyncio.sleep(0.1)
@@ -517,12 +542,7 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                 with open(MESSAGES_FILE, 'w', encoding='utf-8') as f:
                     message_string = format_messages_to_string(messages)
                     f.write(message_string)
-                    
-                if len(messages) > 32:
-                    last_3_messages = messages[-3:]
-                    new_context = await refresh_context_async(task, messages, display)
-                    messages = [{"role": "user", "content": new_context}]
-                    messages.extend(last_3_messages)
+
                 tool_result_content: List[BetaToolResultBlockParam] = []
                 for content_block in response_params:
                     output_manager.format_content_block(content_block)
@@ -559,23 +579,35 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                                 "role": "user",
                                 "content": combined_content
                             })
-                            # display.clear_messages("tool")
-                            # display.live.stop()
+
                             await asyncio.sleep(0.2)
-                            # #display.live.start()
-                            await asyncio.sleep(0.2)
-                if not tool_result_content:
+                if (not tool_result_content):# and (not context_recently_refreshed):
                     display.add_message("assistant", "Awaiting User Input ⌨️ (Type your response in the web interface)")
+                    interupt_counter += 1
                     user_input = await display.wait_for_user_input()
-                    if user_input.lower() in ["no", "n"]:
+                    if user_input.lower() in ["no", "n"]:# or interupt_counter > 4:
                         running = False
                     else:
                         messages.append({"role": "user", "content": user_input})
+                        last_3_messages = messages[-4:]
+                        new_context = await refresh_context_async(task, messages, display)
+                        messages =[{"role": "user", "content": new_context}]
+                        # maybe extend with the last message. 
+                else:
+                    context_recently_refreshed = False
+                    if len(messages) > refresh_count:
+                        last_3_messages = messages[-3:]
+                        new_context = await refresh_context_async(task, messages, display)
+                        messages =[{"role": "user", "content": new_context}]
+                        refresh_count += 1
+                        context_recently_refreshed = True
 
-
+                with open(MESSAGES_FILE, 'w', encoding='utf-8') as f:
+                    message_string = format_messages_to_string(messages)
+                    f.write(message_string)
                 token_tracker.update(response)
                 token_tracker.display(display)
-                messages_to_display = messages[-2:] if len(messages) > 1 else messages[-1:]
+                # messages_to_display = messages[-2:] if len(messages) > 1 else messages[-1:]
             except UnicodeEncodeError as ue:
                 ic(f"UnicodeEncodeError: {ue}")
                 rr(f"Unicode encoding error: {ue}")
@@ -615,7 +647,7 @@ def _maybe_filter_to_n_most_recent_images(
     messages: List[BetaMessageParam],
     images_to_keep: int,
     min_removal_threshold: int
-):
+    ):
     if images_to_keep is None:
         return messages
 
@@ -670,33 +702,19 @@ async def summarize_recent_messages(messages: List[BetaMessageParam], display: A
                                 conversation_text += f"\n{role} (Tool Result): {item.get('text', '')}"
         else:
             conversation_text += f"\n{role}: {msg['content']}"
-    conversation_text = ""
-    for msg in messages:
-        role = msg['role'].upper()
-        if isinstance(msg['content'], list):
-            for block in msg['content']:
-                if isinstance(block, dict):
-                    if block.get('type') == 'text':
-                        conversation_text += f"\n{role}: {block.get('text', '')}"
-                    elif block.get('type') == 'tool_result':
-                        for item in block.get('content', []):
-                            if item.get('type') == 'text':
-                                conversation_text += f"\n{role} (Tool Result): {item.get('text', '')}"
-        else:
-            conversation_text += f"\n{role}: {msg['content']}"
+
     summary_prompt = f"""Please provide a concise casual natural language summary of the messages. 
-    They are the actual LLM messages log of interaction and you will provide between 3 and 5 conversational style sentences informing someone what was done. 
-    Focus on the actions taken and provide the names of any files, functions, directories, or paths mentioned and a basic idea of what was done and why. 
-    At the end, propose a self-critical question about what could possibly go wrong or what might already be wrong in the code so far, and answer it briefly.
-    Enclose your summary,self-critical question and answer in XML-style tags, for example: <SUMMARY_RESPONSE> ....  </SUMMARY_RESPONSE>
-    Your response inside of the tags should be in HTML format that would make it easy for the reader to understand and view the summary.
-    Messages to summarize:
-    {conversation_text}"""
+        They are the actual LLM messages log of interaction and you will provide between 3 and 5 conversational style sentences informing someone what was done. 
+        Focus on the actions taken and provide the names of any files, functions, directories, or paths mentioned and a basic idea of what was done and why. 
+        At the end, propose a self-critical question about what could possibly go wrong or what might already be wrong in the code so far, and answer it briefly.
+        Enclose your summary,self-critical question and answer in XML-style tags, for example: <SUMMARY_RESPONSE> ....  </SUMMARY_RESPONSE>
+        Your response inside of the tags should be in HTML format that would make it easy for the reader to understand and view the summary.
+        Messages to summarize:
+        {conversation_text}"""
     messages = [
     {
           "role": "user",
           "content": [
-              
                     {
                         
                     "type": "text",
@@ -708,8 +726,8 @@ async def summarize_recent_messages(messages: List[BetaMessageParam], display: A
 
     ic(messages)
     completion = sum_client.chat.completions.create(
-    model=model,
-    messages=messages)
+                model=model,
+                messages=messages)
     ic(completion)
     # response = sum_client.messages.create(
     #     model=SUMMARY_MODEL,

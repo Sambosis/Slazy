@@ -48,7 +48,7 @@ def log_file_operation(path: Path, operation: str) -> None:
         ic(f"Failed to log file operation: {str(e)}")
 
 def get_all_current_code():
-    """ Returns the complete contents of all of the files that have been logged as created with a #<filename> preceding each files code"""
+    """ Returns the complete contents of all files with special handling for images """
     try:
         LOG_FILE = Path(get_constant('LOG_FILE'))
         # Create the file if it does not exist
@@ -56,11 +56,10 @@ def get_all_current_code():
             LOG_FILE.touch()
         # Read the log file
         with open(LOG_FILE, 'r', encoding='utf-8') as f:
-            # Handle case of empty file, return "no code yet"
+            # Handle case of empty file
             if f.read() == "":
                 return "No code yet"
             f.seek(0)  # Reset file pointer to the beginning
-            
             logs = json.loads(f.read())
         
         # Initialize output string
@@ -76,12 +75,19 @@ def get_all_current_code():
                 if not path.exists():
                     continue
                 
-                # Read file content
-                content = path.read_text(encoding='utf-8')
-                
-                # Add file header and content to output
+                # Add file header
                 output.append(f"# filepath: {filepath}")
-                output.append(content)
+                
+                # Check if it's an image file
+                if path.suffix.lower() in ['.png', '.jpg', '.jpeg', '.gif', '.bmp']:
+                    output.append("[Image File]")
+                    output.append(f"Created: {logs[filepath]['created_at']}")
+                    output.append(f"Last Operation: {logs[filepath]['operations'][-1]['operation']}")
+                else:
+                    # For non-image files, include the content
+                    content = path.read_text(encoding='utf-8')
+                    output.append(content)
+                
                 output.append("\n" + "=" * 80 + "\n")  # Separator between files
                 
             except Exception as e:

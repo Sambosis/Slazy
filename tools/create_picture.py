@@ -9,6 +9,8 @@ from dotenv import load_dotenv
 load_dotenv()
 import os
 import PIL
+from utils.file_logger import log_file_operation
+
 class PictureCommand(str, Enum):
     CREATE = "create"
 
@@ -87,6 +89,9 @@ class PictureGenerationTool(BaseAnthropicTool):
             # Save the raw bytes to file
             with open(output_path, 'wb') as f:
                 f.write(image_data)
+                
+            # Log the file creation
+            log_file_operation(Path(output_path), 'create')
 
             # Create base64 for display
             base64_data = base64.b64encode(image_data).decode("utf-8")
@@ -157,7 +162,7 @@ class PictureGenerationTool(BaseAnthropicTool):
         """Executes the picture generation command"""
         try:
             if self.display:
-                self.display.add_message("user", f"PictureGenerationTool executing command: {command}")
+                self.display.add_message("user", f"Creating picture with description:\n{prompt}")
             
             # output_path = Path(output_path)
             # output_path.mkdir(parents=True, exist_ok=True)
@@ -169,8 +174,8 @@ class PictureGenerationTool(BaseAnthropicTool):
 
             formatted_output = self.format_output(result_data)
 
-            if self.display:
-                self.display.add_message("user", f"PictureGenerationTool completed: {formatted_output}")
+            # if self.display:
+            #     self.display.add_message("user", f"PictureGenerationTool completed:")# {formatted_output}")
             
             return ToolResult(output=formatted_output)
 

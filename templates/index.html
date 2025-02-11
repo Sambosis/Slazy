@@ -1,95 +1,144 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Agent Display</title>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js" crossorigin="anonymous"></script>
-  <style>
-    body { font-family: Arial, sans-serif; }
-    .panel { border: 1px solid #ccc; padding: 10px; margin: 10px; }
-    .user { background-color: #d0f0d0; }
-    .assistant { 
-      background-color: #d0d0f0;
-      font-size: 1.3em;  /* Make assistant messages 20% larger */
-    }
-    #inputForm { margin: 20px; }
-  </style>
-</head>
-<body>
-    <!-- Input form for user responses -->
-  <div id="inputForm">
-    <input type="text" id="userInput" placeholder="Type your response here">
-    <button id="sendInput">Send</button>
-  </div>
-  <div class="panel assistant" id="assistant_panel">
-    <h2>Assistant Messages</h2>
-    <div id="assistant_messages"></div>
-  </div>
-  <div class="panel tool" id="tool_panel">
-    <h2>Tool Results</h2>
-    <div id="tool_messages"></div>
-  </div>
-  <div class="panel user" id="user_panel">
-    <h2>User Messages</h2>
-    <div id="user_messages"></div>
-  </div>
-
-  <script>
-  // Force polling transport to avoid websocket handshake issues.
-  var socket = io({ transports: ['polling'] });
-
-  socket.on('connect', function() {
-    console.log("Connected to server");
-  });
-
-  // Listen for updates
-  socket.on('update', function(data) {
-    // Update User Messages
-    var userDiv = document.getElementById('user_messages');
-    userDiv.innerHTML = '';
-    data.user.forEach(function(message) {
-      var msgElement = document.createElement('div');
-      msgElement.innerHTML = message;
-      userDiv.appendChild(msgElement);
-    });
-
-    // Update Assistant Messages
-    var assistantDiv = document.getElementById('assistant_messages');
-    assistantDiv.innerHTML = '';
-    data.assistant.forEach(function(message) {
-      var msgElement = document.createElement('div');
-      msgElement.innerHTML = message;
-      assistantDiv.appendChild(msgElement);
-    });
-
-    // Update Tool Results
-    var toolDiv = document.getElementById('tool_messages');
-    toolDiv.innerHTML = '';
-    data.tool.forEach(function(message) {
-      if (typeof message === 'object' && message.code && message.css) {
-        if (!document.getElementById('pygments-style')) {
-          var styleElement = document.createElement('style');
-          styleElement.id = 'pygments-style';
-          styleElement.innerHTML = message.css;
-          document.head.appendChild(styleElement);
+    <meta charset="UTF-8">
+    <meta property="og:title" content="Agent Display">
+    <meta property="og:description" content="Interactive agent communication interface">
+    <meta property="og:type" content="website">
+    <title>Agent Display</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.6.1/socket.io.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="/chat/cdn/animate.min.css" rel="stylesheet">
+    <link href="/chat/cdn/all.min.css" rel="stylesheet">
+    <link rel="icon" href="https://cdn.simulationtheory.ai/gasset/?asset=img&prompt=chat agent icon&w=32&h=32&transparent=true">
+    
+    <style>
+        .message-enter {
+            animation: fadeInUp 0.5s ease-out;
         }
-        var codeElement = document.createElement('div');
-        codeElement.innerHTML = message.code;
-        toolDiv.appendChild(codeElement);
-      } else {
-        var msgElement = document.createElement('div');
-        msgElement.innerHTML = message;
-        toolDiv.appendChild(msgElement);
-      }
-    });
-    });
-    document.getElementById('sendInput').addEventListener('click', function() {
-      var input = document.getElementById('userInput').value;
-      if (input) {
-        socket.emit('user_input', { input: input });
-        document.getElementById('userInput').value = '';
-      }
-  });
-</script>
+        
+        .panel-shadow {
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+        
+        .messages-container {
+            scrollbar-width: thin;
+            scrollbar-color: #CBD5E0 #EDF2F7;
+        }
+        
+        .messages-container::-webkit-scrollbar {
+            width: 8px;
+        }
+        
+        .messages-container::-webkit-scrollbar-track {
+            background: #EDF2F7;
+        }
+        
+        .messages-container::-webkit-scrollbar-thumb {
+            background-color: #CBD5E0;
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="container mx-auto p-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <!-- Assistant Messages Panel -->
+            <div class="bg-white rounded-lg panel-shadow p-4">
+                <div class="flex items-center mb-4 text-blue-600">
+                    <i class="fas fa-robot mr-2"></i>
+                    <h2 class="text-xl font-semibold">Assistant Messages</h2>
+                </div>
+                        <div id="assistant_messages" class="messages-container h-[600px] overflow-y-auto space-y-3"></div>
+                    </div>
+
+                    <!-- Tool Results Panel -->
+                    <div class="bg-white rounded-lg panel-shadow p-4">
+                        <div class="flex items-center mb-4 text-purple-600">
+                            <i class="fas fa-tools mr-2"></i>
+                            <h2 class="text-xl font-semibold">Tool Results</h2>
+                        </div>
+                        <div id="tool_messages" class="messages-container h-[600px] overflow-y-auto space-y-3"></div>
+                    </div>
+                </div>
+
+                <!-- User Messages Panel -->
+                <div class="bg-white rounded-lg panel-shadow p-4 mb-4">
+                    <div class="flex items-center mb-4 text-green-600">
+                        <i class="fas fa-user mr-2"></i>
+                        <h2 class="text-xl font-semibold">User Messages</h2>
+                    </div>
+                    <div id="user_messages" class="messages-container h-[150px] overflow-y-auto space-y-3"></div>
+                </div>
+
+        <!-- Input Form -->
+        <div class="flex gap-2">
+            <input type="text" id="userInput" 
+                   class="flex-1 px-4 py-2 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-all"
+                   placeholder="Type your response here">
+            <button id="sendInput" 
+                    class="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition-colors duration-200 flex items-center">
+                <i class="fas fa-paper-plane mr-2"></i>
+                Send
+            </button>
+        </div>
+    </div>
+
+
+    <script>
+        var socket = io({ transports: ['polling'] });
+
+        socket.on('connect', function() {
+            console.log("Connected to server");
+        });
+
+        function createMessageElement(message, type) {
+            var msgElement = document.createElement('div');
+            msgElement.className = `p-3 rounded-lg message-enter ${
+                type === 'assistant' ? 'bg-blue-50 border-l-4 border-blue-500' :
+                type === 'tool' ? 'bg-purple-50 border-l-4 border-purple-500' :
+                'bg-green-50 border-l-4 border-green-500'
+            }`;
+            
+            if (typeof message === 'object' && message.code && message.css) {
+                if (!document.getElementById('pygments-style')) {
+                    var styleElement = document.createElement('style');
+                    styleElement.id = 'pygments-style';
+                    styleElement.innerHTML = message.css;
+                    document.head.appendChild(styleElement);
+                }
+                msgElement.innerHTML = message.code;
+            } else {
+                msgElement.innerHTML = message;
+            }
+            
+            return msgElement;
+        }
+
+        socket.on('update', function(data) {
+            ['user', 'assistant', 'tool'].forEach(type => {
+                var containerDiv = document.getElementById(`${type}_messages`);
+                containerDiv.innerHTML = '';
+                data[type].forEach(message => {
+                    containerDiv.appendChild(createMessageElement(message, type));
+                });
+                containerDiv.scrollTop = containerDiv.scrollHeight;
+            });
+        });
+
+        document.getElementById('sendInput').addEventListener('click', function() {
+            var input = document.getElementById('userInput');
+            if (input.value.trim()) {
+                socket.emit('user_input', { input: input.value });
+                input.value = '';
+            }
+        });
+
+        document.getElementById('userInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('sendInput').click();
+            }
+        });
+    </script>
 </body>
 </html>

@@ -1,3 +1,4 @@
+# agent_display_web.py
 import os
 import threading
 import asyncio
@@ -71,23 +72,27 @@ class AgentDisplayWeb:
                 print("[DEBUG] No event loop set; cannot enqueue user input")
             return None
 
-    async def wait_for_user_input(self):
+    async def wait_for_user_input(self, user_input = None):
         """
         Wait for user input sent from the client via SocketIO.
         Returns:
             The user input as a string.
         """
         # Wait for an item to appear in the queue.
-        user_input = await self.input_queue.get()
-        print("[DEBUG] wait_for_user_input returning:", user_input)
+        if user_input:
+            print("[DEBUG] wait_for_user_input returning from main.py:", user_input)
+            return user_input
+        else:
+            user_input = await self.input_queue.get()
+            print("[DEBUG] wait_for_user_input returning from index.html:", user_input)
         return user_input
 
     def broadcast_update(self):
         # Emit an update event to all connected clients
         self.socketio.emit('update', {
-            'user': self.user_messages[-8:][::-1],  # Only send the last eight messages in reverse order
-            'assistant': self.assistant_messages[-5:][::-1], # Only send the last two messages in reverse order
-            'tool': self.tool_results[-6:][::-1] # Only send the last five messages in reverse order
+            'user': self.user_messages[-8:],  # Only send the last eight messages to do in reverse order add [::-1] at the end
+            'assistant': self.assistant_messages[-5:], # Only send the last five messages in reverse order
+            'tool': self.tool_results[:6] # Only send the last five messages in reverse order
         })
 
 
