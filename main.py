@@ -511,11 +511,14 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                     {"role": msg["role"], "content": truncate_message_content(msg["content"])}
                     for msg in messages
                 ]
+                # --- START ASYNC SUMMARY ---
+                summary_task = asyncio.create_task(summarize_recent_messages(messages[-6:], display))  # Create the task, but don't await it yet
+                # quick_summary = await summarize_recent_messages(messages[-6:], display)
+                # add_summary(quick_summary)
+                # display.add_message("assistant", f"<p></p>{quick_summary}<p></p>")
+                # await asyncio.sleep(0.1)
 
-                quick_summary = await summarize_recent_messages(messages[-6:], display)
-                add_summary(quick_summary)
-                display.add_message("assistant", f"<p></p>{quick_summary}<p></p>")
-                await asyncio.sleep(0.1)
+                # --- MAIN LLM CALL ---
                 response = client.beta.messages.create(
                     max_tokens=MAX_SUMMARY_TOKENS,
                     
@@ -581,6 +584,12 @@ async def sampling_loop(*, model: str, messages: List[BetaMessageParam], api_key
                             })
 
                             await asyncio.sleep(0.2)
+
+                            # --- NOW AWAIT AND DISPLAY SUMMARY ---
+                quick_summary = await summary_task  # Now we wait for the summary to complete
+                add_summary(quick_summary)
+                display.add_message("assistant", f"<p></p>{quick_summary}<p></p>")
+                await asyncio.sleep(0.1)
                 if (not tool_result_content):# and (not context_recently_refreshed):
                     display.add_message("assistant", "Awaiting User Input ⌨️ (Type your response in the web interface)")
                     interupt_counter += 1
@@ -706,8 +715,7 @@ async def summarize_recent_messages(messages: List[BetaMessageParam], display: A
     summary_prompt = f"""Please provide a concise casual natural language summary of the messages. 
         They are the actual LLM messages log of interaction and you will provide between 3 and 5 conversational style sentences informing someone what was done. 
         Focus on the actions taken and provide the names of any files, functions, directories, or paths mentioned and a basic idea of what was done and why. 
-        At the end, propose a self-critical question about what could possibly go wrong or what might already be wrong in the code so far, and answer it briefly.
-        Enclose your summary,self-critical question and answer in XML-style tags, for example: <SUMMARY_RESPONSE> ....  </SUMMARY_RESPONSE>
+        Enclose your summary in XML-style tags, for example: <SUMMARY_RESPONSE> ....  </SUMMARY_RESPONSE>
         Your response inside of the tags should be in HTML format that would make it easy for the reader to understand and view the summary.
         Messages to summarize:
         {conversation_text}"""

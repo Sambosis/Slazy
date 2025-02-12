@@ -145,7 +145,7 @@ class EditTool(BaseAnthropicTool):
                 return ToolResult(output=self.format_output(output_data))
 
             elif command == "insert":
-                if insert_line is None:
+                if inser    t_line is None:
                     raise ToolError("Parameter `insert_line` is required for command: insert")
                 if not new_str:
                     raise ToolError("Parameter `new_str` is required for command: insert")
